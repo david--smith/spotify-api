@@ -20,12 +20,13 @@ print regex.findall(r.content)
 print '-----------'
 soup = BeautifulSoup(r.content)
 trs = soup.find_all('tr')
+songs = []
 for tr in trs:
-  #print tr
-  #print tr.contents
-  print '---'
-  for child in tr.children:
-    print child.string
+  song = [text for text in tr.stripped_strings]
+  if len(song) > 0 and song[0] is not 'Artist':
+    songs.append(song)
+for song in songs:
+  print song[0] + ' // ' + song[1] + ' // ' + song[2]
 exit()
 
 
