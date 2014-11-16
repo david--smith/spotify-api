@@ -38,7 +38,11 @@ url = "https://accounts.spotify.com/api/token"
 print '----------'
 print 'Request to: {}\nWith headers: {}\nWith body: {}'.format(url, headers, body_data)
 r = requests.post(url, data=body, headers=headers)
+print '----------'
 print r.status_code, r.content
+r_json = r.json()
+print json.dumps(r_json, sort_keys=True, indent=2, separators=(',', ': '))
+print r_json['access_token']
 
 
 
