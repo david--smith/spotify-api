@@ -1,2 +1,3 @@
 spotify-api
 ===========
+playlists
