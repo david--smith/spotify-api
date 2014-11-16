@@ -26,15 +26,18 @@ print "{} = {}".format(auth_raw, auth_encoded)
 headers = {'Authorization': 'Basic %s' % auth_encoded}
 url = "https://accounts.spotify.com/api/token"
 print '----------'
-print 'Request to: {}\nWith headers: {}\nWith body: {}'.format(url, headers, body_data)
+print 'POST request to: {}\nWith headers: {}\nWith body: {}'.format(url, headers, body_data)
 r = requests.post(url, data=body, headers=headers)
 print '----------'
 print r.status_code, r.content
 r_json = r.json()
 print json.dumps(r_json, sort_keys=True, indent=2, separators=(',', ': '))
-print r_json['access_token']
+token=r_json['access_token']
 
-
+headers = {'Authorization': 'Bearer %s' % token}
+url = 'https://api.spotify.com/v1/tracks/2TpxZ7JUBn3uw46aR7qd6V'
+r = requests.get(url, headers=headers)
+print r.status_code, r.content
 
 
     ##################################
