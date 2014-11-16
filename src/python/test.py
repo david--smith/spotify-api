@@ -25,8 +25,23 @@ for tr in trs:
   song = [text for text in tr.stripped_strings]
   if len(song) > 0 and song[0] is not 'Artist':
     songs.append(song)
+
+f = open('./output/test.html','w')
+f.write('<html><body>\n')
+f.write('<table border=1>')
 for song in songs:
-  print song[0] + ' // ' + song[1] + ' // ' + song[2]
+  artist = song[0]
+  track = song[1]
+  album = song[2]
+  print artist + ' // ' + track + ' // ' + album
+  f.write('<tr align=left valign=top>\n')
+  f.write('  <td>' + artist + '</td>\n')
+  f.write('  <td>' + track + '</td>\n')
+  f.write('  <td>' + album + '</td>\n')
+  f.write('</tr>\n')
+f.write('</table>')
+f.write('</body></html>')
+f.close()
 exit()
 
 
