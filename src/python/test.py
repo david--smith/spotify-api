@@ -2,11 +2,33 @@
 
 import ConfigParser
 import os
+import re
 import requests
 import spotipy
 import spotipy.util as util
 import json
 import base64
+
+from bs4 import BeautifulSoup
+
+url = 'http://wprb.com/tpm/world/printplaylist.php?show_id=32977'
+r = requests.get(url)
+print r.content
+regex = re.compile("<td class='mid'.*>.*>(.*)</span>",re.MULTILINE)
+regex_result = regex.search(r.content)
+print regex.findall(r.content)
+print '-----------'
+soup = BeautifulSoup(r.content)
+trs = soup.find_all('tr')
+for tr in trs:
+  #print tr
+  #print tr.contents
+  print '---'
+  for child in tr.children:
+    print child.string
+exit()
+
+
 
 
 CONFIG_FILE='config/settings.ini'
@@ -33,14 +55,14 @@ print r.status_code, r.content
 r_json = r.json()
 print json.dumps(r_json, sort_keys=True, indent=2, separators=(',', ': '))
 token=r_json['access_token']
-
 headers = {'Authorization': 'Bearer %s' % token}
-url = 'https://api.spotify.com/v1/tracks/2TpxZ7JUBn3uw46aR7qd6V'
+
+artist = 'wolfhounds'
+url = 'https://api.spotify.com/v1/search?q={}&type=artist'.format(artist)
 r = requests.get(url, headers=headers)
 print r.status_code, r.content
-
+print '----------'
+r_json = r.json()
+print json.dumps(r_json['artists']['items'][0])
 
     ##################################
-
-#https://developer.spotify.com/web-api/authorization-guide/#client_credentials_flow
-  #POST https://accounts.spotify.com/api/token
