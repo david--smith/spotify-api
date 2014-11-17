@@ -41,7 +41,6 @@ def login_to_spotify():
   return token, client_id
 
 def fetch_artist(artist):
-  artist = 'wolfhounds'
   url = 'https://api.spotify.com/v1/search?q={}&type=artist'.format(artist)
   r = requests.get(url, headers=headers)
   #print r.status_code, r.content
@@ -74,8 +73,13 @@ def fetch_wprb_playlist(url):
     track = song[1]
     album = song[2]
     print artist + ' // ' + track + ' // ' + album
+    artists = fetch_artist(artist)
+    if len(artists) == 1:
+      artist_url='<a href="{}">{}</a>'.format(artists[0]['uri'], artists[0]['name'])
+    else:
+      artist_url = artist
     f.write('<tr align=left valign=top>\n')
-    f.write('  <td>' + artist + '</td>\n')
+    f.write('  <td>' + artist_url + '</td>\n')
     f.write('  <td>' + track + '</td>\n')
     f.write('  <td>' + album + '</td>\n')
     f.write('</tr>\n')
