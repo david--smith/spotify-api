@@ -52,21 +52,20 @@ def fetch_artist(artist):
 
 def fetch_wprb_playlist(url):
   r = requests.get(url)
-  #print r.content
   regex = re.compile("<td class='mid'.*>.*>(.*)</span>",re.MULTILINE)
   regex_result = regex.search(r.content)
-  #print regex.findall(r.content)
-  #print '-----------'
   soup = BeautifulSoup(r.content)
   trs = soup.find_all('tr')
   songs = []
   for tr in trs:
     song = [text for text in tr.stripped_strings]
-    if len(song) > 0 and song[0] is not 'Artist':
+    if len(song) > 0 and song[0] != 'Artist':
       songs.append(song)
 
   f = open('./output/test.html','w')
   f.write('<html><body>\n')
+  f.write('<a href="{}">ORIGINAL PLAYLIST</a>\n'.format(url))
+  f.write('<p>\n')
   f.write('<table border=1>')
   for song in songs:
     artist = song[0]
@@ -74,8 +73,10 @@ def fetch_wprb_playlist(url):
     album = song[2]
     print artist + ' // ' + track + ' // ' + album
     artists = fetch_artist(artist)
-    if len(artists) == 1:
-      artist_url='<a href="{}">{}</a>'.format(artists[0]['uri'], artists[0]['name'])
+    if len(artists) > 0:
+      artist_url = ''
+      for artist_info in artists:
+        artist_url+='<a href="{}">{}</a>&nbsp;&nbsp;'.format(artists[0]['uri'], artists[0]['name'])
     else:
       artist_url = artist
     f.write('<tr align=left valign=top>\n')
