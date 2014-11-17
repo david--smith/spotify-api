@@ -64,6 +64,16 @@ def fetch_album(artist, album):
   album_matches = [album_info for album_info in r_json['albums']['items'] if album_info['name'].lower() == album.lower()]
   return album_matches
 
+def has_href_printplaylist(tag):
+    return tag.name == 'a' and 'printplaylist' in tag['href']
+
+def fetch_wprb_playlists(url, limit):
+  r = requests.get(url)
+  soup = BeautifulSoup(r.content)
+  url_tags = soup.find_all(has_href_printplaylist)
+  for href in url_tags:
+    print href
+
 def fetch_wprb_playlist(url):
   r = requests.get(url)
   regex = re.compile("<td class='mid'.*>.*>(.*)</span>",re.MULTILINE)
@@ -126,7 +136,7 @@ url = 'http://wprb.com/tpm/world/printplaylist.php?show_id=32977'
 fetch_wprb_playlist(url)
 
 url = 'http://wprb.com/tpm/world/djplaylists.php?id=65'
-fetch_wprb_playlists(url)
+fetch_wprb_playlists(url, limit=5)
 
 
 url = 'https://api.spotify.com/v1/users/{}/playlists'.format(client_id)
