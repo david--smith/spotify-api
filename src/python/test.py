@@ -50,6 +50,16 @@ def fetch_artist(artist):
   artist_matches = [artist_info for artist_info in r_json['artists']['items'] if artist_info['name'].lower() == artist.lower()]
   return artist_matches
 
+def fetch_track(artist, track):
+  url = 'https://api.spotify.com/v1/search?q={}&type=track'.format(track)
+  r = requests.get(url, headers=headers)
+  #print r.status_code, r.content
+  #print '----------'
+  r_json = r.json()
+  #print json.dumps(r_json)
+  track_matches = [track_info for track_info in r_json['tracks']['items'] if track_info['name'].lower() == track.lower() and track_info['artists'][0]['name'].lower() == artist.lower()]
+  return track_matches
+
 def fetch_wprb_playlist(url):
   r = requests.get(url)
   regex = re.compile("<td class='mid'.*>.*>(.*)</span>",re.MULTILINE)
@@ -73,15 +83,23 @@ def fetch_wprb_playlist(url):
     album = song[2]
     print artist + ' // ' + track + ' // ' + album
     artists = fetch_artist(artist)
+    tracks = fetch_track(artist, track)
     if len(artists) > 0:
       artist_url = ''
       for artist_info in artists:
-        artist_url+='<a href="{}">{}</a>&nbsp;&nbsp;'.format(artists[0]['uri'], artists[0]['name'])
+        artist_url+='<a href="{}">{}</a>&nbsp;&nbsp;'.format(artist_info['uri'], artist_info['name'])
     else:
       artist_url = artist
+
+    if len(tracks) > 0:
+      track_url = ''
+      for track_info in tracks:
+        track_url+='<a href="{}">{}</a>&nbsp;&nbsp;'.format(track_info['uri'], track_info['name'])
+    else:
+      track_url = track
     f.write('<tr align=left valign=top>\n')
     f.write('  <td>' + artist_url + '</td>\n')
-    f.write('  <td>' + track + '</td>\n')
+    f.write('  <td>' + track_url + '</td>\n')
     f.write('  <td>' + album + '</td>\n')
     f.write('</tr>\n')
   f.write('</table>')
