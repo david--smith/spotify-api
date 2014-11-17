@@ -8,7 +8,7 @@ import spotipy
 import spotipy.util as util
 import json
 import base64
-
+from slugify import slugify
 from bs4 import BeautifulSoup
 
 def login_to_spotify():
@@ -75,8 +75,8 @@ def fetch_wprb_playlist(url):
     song = [text for text in tr.stripped_strings]
     if len(song) > 0 and song[0] != 'Artist':
       songs.append(song)
-
-  f = open('./output/test.html','w')
+  slug = slugify(url)
+  f = open('./output/{}.html'.format(slug),'w')
   f.write('<html><body>\n')
   f.write('<a href="{}">ORIGINAL PLAYLIST</a>\n'.format(url))
   f.write('<p>\n')
@@ -124,6 +124,9 @@ headers = {'Authorization': 'Bearer %s' % token}
 
 url = 'http://wprb.com/tpm/world/printplaylist.php?show_id=32977'
 fetch_wprb_playlist(url)
+
+url = 'http://wprb.com/tpm/world/djplaylists.php?id=65'
+fetch_wprb_playlists(url)
 
 
 url = 'https://api.spotify.com/v1/users/{}/playlists'.format(client_id)
