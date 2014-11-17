@@ -51,6 +51,8 @@ def fetch_artist(artist):
 def fetch_track(artist, track):
   url = 'https://api.spotify.com/v1/search?q={}&type=track'.format(track)
   r = requests.get(url, headers=headers)
+  if r.status_code == 400:
+    return []
   r_json = r.json()
   #print json.dumps(r_json)
   track_matches = [track_info for track_info in r_json['tracks']['items'] if track_info['name'].lower() == track.lower() and track_info['artists'][0]['name'].lower() == artist.lower()]
@@ -59,6 +61,8 @@ def fetch_track(artist, track):
 def fetch_album(artist, album):
   url = 'https://api.spotify.com/v1/search?q={}&type=album'.format(album)
   r = requests.get(url, headers=headers)
+  if r.status_code == 400:
+    return[]
   r_json = r.json()
 #  print '\n'+ json.dumps(r_json) + '\n'
   album_matches = [album_info for album_info in r_json['albums']['items'] if album_info['name'].lower() == album.lower()]
@@ -67,14 +71,23 @@ def fetch_album(artist, album):
 def has_href_printplaylist(tag):
     return tag.name == 'a' and 'printplaylist' in tag['href']
 
-def fetch_wprb_playlists(url, limit):
+def fetch_wprb_playlists(url, limit=3):
   r = requests.get(url)
   soup = BeautifulSoup(r.content)
   url_tags = soup.find_all(has_href_printplaylist)
+  index=0
   for href in url_tags:
-    print href
+    pl_url = 'http://wprb.com/tpm/world/' + href['href']
+    print 'fetching playlist @ {}'.format(pl_url)
+    fetch_wprb_playlist(pl_url)
+    index=index+1
+    if index>=limit:
+      break
 
 def fetch_wprb_playlist(url):
+  slug = slugify(url)
+  out_filename = './output/{}.html'.format(slug)
+
   r = requests.get(url)
   regex = re.compile("<td class='mid'.*>.*>(.*)</span>",re.MULTILINE)
   regex_result = regex.search(r.content)
@@ -85,8 +98,7 @@ def fetch_wprb_playlist(url):
     song = [text for text in tr.stripped_strings]
     if len(song) > 0 and song[0] != 'Artist':
       songs.append(song)
-  slug = slugify(url)
-  f = open('./output/{}.html'.format(slug),'w')
+  f = open(out_filename,'w')
   f.write('<html><body>\n')
   f.write('<a href="{}">ORIGINAL PLAYLIST</a>\n'.format(url))
   f.write('<p>\n')
@@ -116,7 +128,11 @@ def fetch_wprb_playlist(url):
     album_url = album + '&nbsp;&nbsp;'
     if len(albums) > 0:
       for album_info in albums:
-        album_url+='<a href="{}"><img src="{}" height="72" width="72"/></a>&nbsp;&nbsp;'.format(album_info['uri'], album_info['images'][0]['url'])
+        if 'images' in album_info and len(album_info['images']) > 0:
+          img_src = album_info['images'][0]['url']
+        else:
+          img_src='none!'
+        album_url+='<a href="{}"><img src="{}" height="72" width="72"/></a>&nbsp;&nbsp;'.format(album_info['uri'], img_src)
 
     f.write('<tr align=left valign=top>\n')
     f.write('  <td>' + artist_url + '</td>\n')
@@ -133,10 +149,17 @@ token, client_id = login_to_spotify()
 headers = {'Authorization': 'Bearer %s' % token}
 
 url = 'http://wprb.com/tpm/world/printplaylist.php?show_id=32977'
-fetch_wprb_playlist(url)
+#fetch_wprb_playlist(url)
 
-url = 'http://wprb.com/tpm/world/djplaylists.php?id=65'
-fetch_wprb_playlists(url, limit=5)
+urls = [
+  #'http://wprb.com/tpm/world/djplaylists.php?id=65',
+  'http://wprb.com/tpm/world/djplaylists.php?id=530',
+  'http://wprb.com/tpm/world/djplaylists.php?id=90',
+  'http://wprb.com/tpm/world/djplaylists.php?id=383',
+  'http://wprb.com/tpm/world/djplaylists.php?id=8'
+  ]
+for url in urls:
+  fetch_wprb_playlists(url, limit=5)
 
 
 url = 'https://api.spotify.com/v1/users/{}/playlists'.format(client_id)
