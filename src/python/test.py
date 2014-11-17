@@ -43,8 +43,6 @@ def login_to_spotify():
 def fetch_artist(artist):
   url = 'https://api.spotify.com/v1/search?q={}&type=artist'.format(artist)
   r = requests.get(url, headers=headers)
-  #print r.status_code, r.content
-  #print '----------'
   r_json = r.json()
   #print json.dumps(r_json['artists']['items'][0])
   artist_matches = [artist_info for artist_info in r_json['artists']['items'] if artist_info['name'].lower() == artist.lower()]
@@ -53,12 +51,18 @@ def fetch_artist(artist):
 def fetch_track(artist, track):
   url = 'https://api.spotify.com/v1/search?q={}&type=track'.format(track)
   r = requests.get(url, headers=headers)
-  #print r.status_code, r.content
-  #print '----------'
   r_json = r.json()
   #print json.dumps(r_json)
   track_matches = [track_info for track_info in r_json['tracks']['items'] if track_info['name'].lower() == track.lower() and track_info['artists'][0]['name'].lower() == artist.lower()]
   return track_matches
+
+def fetch_album(artist, album):
+  url = 'https://api.spotify.com/v1/search?q={}&type=album'.format(album)
+  r = requests.get(url, headers=headers)
+  r_json = r.json()
+#  print '\n'+ json.dumps(r_json) + '\n'
+  album_matches = [album_info for album_info in r_json['albums']['items'] if album_info['name'].lower() == album.lower()]
+  return album_matches
 
 def fetch_wprb_playlist(url):
   r = requests.get(url)
@@ -84,6 +88,7 @@ def fetch_wprb_playlist(url):
     print artist + ' // ' + track + ' // ' + album
     artists = fetch_artist(artist)
     tracks = fetch_track(artist, track)
+    albums = fetch_album(artist, album)
     if len(artists) > 0:
       artist_url = ''
       for artist_info in artists:
@@ -97,10 +102,16 @@ def fetch_wprb_playlist(url):
         track_url+='<a href="{}">{}</a>&nbsp;&nbsp;'.format(track_info['uri'], track_info['name'])
     else:
       track_url = track
+
+    album_url = album + '&nbsp;&nbsp;'
+    if len(albums) > 0:
+      for album_info in albums:
+        album_url+='<a href="{}"><img src="{}" height="72" width="72"/></a>&nbsp;&nbsp;'.format(album_info['uri'], album_info['images'][0]['url'])
+
     f.write('<tr align=left valign=top>\n')
     f.write('  <td>' + artist_url + '</td>\n')
     f.write('  <td>' + track_url + '</td>\n')
-    f.write('  <td>' + album + '</td>\n')
+    f.write('  <td>' + album_url + '</td>\n')
     f.write('</tr>\n')
   f.write('</table>')
   f.write('</body></html>')
@@ -114,20 +125,15 @@ headers = {'Authorization': 'Bearer %s' % token}
 url = 'http://wprb.com/tpm/world/printplaylist.php?show_id=32977'
 fetch_wprb_playlist(url)
 
-wolves = fetch_artist('wolfhounds')
-wolf = wolves[0]
-print wolf['name'] + ' == ' + wolf['uri']
-print json.dumps(wolf, sort_keys=True, indent=2, separators=(',', ': '))
-
 
 url = 'https://api.spotify.com/v1/users/{}/playlists'.format(client_id)
 body = {'name': 'foo1'}
 headers = {'Authorization': 'Bearer %s' % token, 'Content-Type': 'application/json'}
-r = requests.post(url, data=body, headers=headers)
-print '----------'
-print r.status_code, r.content
-r_json = r.json()
-print json.dumps(r_json, sort_keys=True, indent=2, separators=(',', ': '))
+#r = requests.post(url, data=body, headers=headers)
+#print '----------'
+#print r.status_code, r.content
+#r_json = r.json()
+#print json.dumps(r_json, sort_keys=True, indent=2, separators=(',', ': '))
 
 
     ##################################
