@@ -1,2 +1,8 @@
 output/
 config/
+
+.DS_Store
+*.pyc
+
+
+
