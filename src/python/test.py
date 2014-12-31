@@ -85,13 +85,14 @@ def fetch_wprb_playlists(url, limit=3):
       break
 
 def fetch_wprb_playlist(url):
-  slug = slugify(url)
-  out_filename = './output/{}.html'.format(slug)
+  #slug = slugify(url)
+  #out_filename = './output/{}.html'.format(slug)
 
   r = requests.get(url)
   regex = re.compile("<td class='mid'.*>.*>(.*)</span>",re.MULTILINE)
   regex_result = regex.search(r.content)
   soup = BeautifulSoup(r.content)
+  out_filename = './output/{}.html'.format(soup.title.text)
   trs = soup.find_all('tr')
   songs = []
   for tr in trs:
@@ -100,7 +101,7 @@ def fetch_wprb_playlist(url):
       songs.append(song)
   f = open(out_filename,'w')
   f.write('<html><body>\n')
-  f.write('<a href="{}">ORIGINAL PLAYLIST</a>\n'.format(url))
+  f.write('<a href="{}">{}</a>\n'.format(url, soup.title.text))
   f.write('<p>\n')
   f.write('<table border=1>')
   for song in songs:
@@ -153,10 +154,18 @@ url = 'http://wprb.com/tpm/world/printplaylist.php?show_id=32977'
 
 urls = [
   #'http://wprb.com/tpm/world/djplaylists.php?id=65',
+#  'http://wprb.com/tpm/world/djplaylists.php?id=530',
+#  'http://wprb.com/tpm/world/djplaylists.php?id=90',
+#  'http://wprb.com/tpm/world/djplaylists.php?id=383',
+#  'http://wprb.com/tpm/world/djplaylists.php?id=8',
+  'http://wprb.com/tpm/world/djplaylists.php?id=511',
+  'http://wprb.com/tpm/world/djplaylists.php?id=425',
+  'http://wprb.com/tpm/world/djplaylists.php?id=435',
   'http://wprb.com/tpm/world/djplaylists.php?id=530',
-  'http://wprb.com/tpm/world/djplaylists.php?id=90',
-  'http://wprb.com/tpm/world/djplaylists.php?id=383',
-  'http://wprb.com/tpm/world/djplaylists.php?id=8'
+  'http://wprb.com/tpm/world/djplaylists.php?id=443',
+  'http://wprb.com/tpm/world/djplaylists.php?id=415',
+  'http://wprb.com/tpm/world/djplaylists.php?id=104',
+  'http://wprb.com/tpm/world/djplaylists.php?id=528'
   ]
 for url in urls:
   fetch_wprb_playlists(url, limit=5)
