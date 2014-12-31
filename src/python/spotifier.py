@@ -32,15 +32,22 @@ def fetch_track(artist, track):
   track_matches = [track_info for track_info in r_json['tracks']['items'] if track_info['name'].lower() == track.lower() and track_info['artists'][0]['name'].lower() == artist.lower()]
   return track_matches
 
-def fetch_album(artist, album):
+def fetch_album(album):
   url = 'https://api.spotify.com/v1/search?q={}&type=album'.format(album)
 #  r = requests.get(url, headers=headers)
   r = requests.get(url)
   if r.status_code == 400:
     return[]
   r_json = r.json()
-#  print '\n'+ json.dumps(r_json) + '\n'
+  #print '\n'+ json.dumps(r_json, sort_keys=True, indent=2, separators=(',', ': ')) + '\n'
   album_matches = [album_info for album_info in r_json['albums']['items'] if album_info['name'].lower() == album.lower()]
+  for album in album_matches:
+    url = album['href']
+    r = requests.get(url)
+    r_json = r.json()
+    #print json.dumps(r_json, sort_keys=True, indent=2, separators=(',', ': '))
+    #print r_json['artists'][0]['name']
+    album['artist'] = r_json['artists'][0]['name']
   return album_matches
 
 
@@ -60,7 +67,7 @@ def output_songs(url, title, songs, out_filename=None):
     print artist + ' // ' + track + ' // ' + album
     artists = fetch_artist(artist)
     tracks = fetch_track(artist, track)
-    albums = fetch_album(artist, album)
+    albums = fetch_album(album)
     if len(artists) > 0:
       artist_url = ''
       for artist_info in artists:
@@ -82,9 +89,13 @@ def output_songs(url, title, songs, out_filename=None):
           img_src = album_info['images'][0]['url']
         else:
           img_src='none!'
+        #print json.dumps(album_info, sort_keys=True, indent=2, separators=(',', ': '))
         album_url+="""<a href="{}">
-          <img src="{}" height="72" width="72"/>
-          </a>&nbsp;&nbsp;""".format(album_info['uri'], img_src)
+          <figure>
+            <img src="{}" height="72" width="72"/>
+            <figcaption>by {}</figcaption>
+          </figure>
+          </a>&nbsp;&nbsp;""".format(album_info['uri'], img_src, album_info['artist'])
 
     f.write('<tr align=left valign=top>\n')
     f.write('  <td>' + artist_url + '</td>\n')
