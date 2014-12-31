@@ -53,7 +53,7 @@ def output_songs(url, title, songs, out_filename=None):
   f.write('<p>\n')
   f.write('<table border=1>')
   for song in songs:
-    print json.dumps(song, sort_keys=True, indent=2, separators=(',', ': '))
+#    print json.dumps(song, sort_keys=True, indent=2, separators=(',', ': '))
     artist = song['artist']
     track = song['track']
     album = song['album']
@@ -82,7 +82,9 @@ def output_songs(url, title, songs, out_filename=None):
           img_src = album_info['images'][0]['url']
         else:
           img_src='none!'
-        album_url+='<a href="{}"><img src="{}" height="72" width="72"/></a>&nbsp;&nbsp;'.format(album_info['uri'], img_src)
+        album_url+="""<a href="{}">
+          <img src="{}" height="72" width="72"/>
+          </a>&nbsp;&nbsp;""".format(album_info['uri'], img_src)
 
     f.write('<tr align=left valign=top>\n')
     f.write('  <td>' + artist_url + '</td>\n')
