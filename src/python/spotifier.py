@@ -14,39 +14,44 @@ from bs4 import BeautifulSoup
 
 
 def fetch_artist(artist):
-  url = 'https://api.spotify.com/v1/search?q={}&type=artist'.format(artist)
+  try:
+    url = 'https://api.spotify.com/v1/search?q={}&type=artist'.format(artist)
+  except:
+    return []
+
   r = requests.get(url)
   r_json = r.json()
-  #print json.dumps(r_json['artists']['items'][0])
   artist_matches = [artist_info for artist_info in r_json['artists']['items'] if artist_info['name'].lower() == artist.lower()]
   return artist_matches
 
 def fetch_track(artist, track):
-  url = 'https://api.spotify.com/v1/search?q={}&type=track'.format(track)
+  try:
+    url = 'https://api.spotify.com/v1/search?q={}&type=track'.format(track)
+  except:
+    return []
 #  r = requests.get(url, headers=headers)
   r = requests.get(url)
   if r.status_code == 400:
     return []
   r_json = r.json()
-  #print json.dumps(r_json)
   track_matches = [track_info for track_info in r_json['tracks']['items'] if track_info['name'].lower() == track.lower() and track_info['artists'][0]['name'].lower() == artist.lower()]
   return track_matches
 
 def fetch_album(album):
-  url = 'https://api.spotify.com/v1/search?q={}&type=album'.format(album)
+  try:
+    url = 'https://api.spotify.com/v1/search?q={}&type=album'.format(album)
+  except:
+    return []
 #  r = requests.get(url, headers=headers)
   r = requests.get(url)
   if r.status_code == 400:
     return[]
   r_json = r.json()
-  #print '\n'+ json.dumps(r_json, sort_keys=True, indent=2, separators=(',', ': ')) + '\n'
   album_matches = [album_info for album_info in r_json['albums']['items'] if album_info['name'].lower() == album.lower()]
   for album in album_matches:
     url = album['href']
     r = requests.get(url)
     r_json = r.json()
-    #print json.dumps(r_json, sort_keys=True, indent=2, separators=(',', ': '))
-    #print r_json['artists'][0]['name']
     album['artist'] = r_json['artists'][0]['name']
   return album_matches
 
@@ -64,7 +69,7 @@ def output_songs(url, title, songs, out_filename=None):
     artist = song['artist']
     track = song['track']
     album = song['album']
-    print artist + ' // ' + track + ' // ' + album
+    print title + ': ' + artist + ' // ' + track + ' // ' + album
     artists = fetch_artist(artist)
     tracks = fetch_track(artist, track)
     albums = fetch_album(album)
@@ -89,18 +94,22 @@ def output_songs(url, title, songs, out_filename=None):
           img_src = album_info['images'][0]['url']
         else:
           img_src='none!'
-        #print json.dumps(album_info, sort_keys=True, indent=2, separators=(',', ': '))
-        album_url+="""<a href="{}">
+        try:
+          album_url+="""<a href="{}">
           <figure>
             <img src="{}" height="72" width="72"/>
             <figcaption>by {}</figcaption>
           </figure>
-          </a>&nbsp;&nbsp;""".format(album_info['uri'], img_src, album_info['artist'])
+          </a>&nbsp;&nbsp;""".format(album_info['uri'].encode('ascii', 'replace'),
+            img_src,
+            album_info['artist'].encode('ascii', errors='replace'))
+        except:
+          album_url='NONE'
 
     f.write('<tr align=left valign=top>\n')
-    f.write('  <td>' + artist_url + '</td>\n')
-    f.write('  <td>' + track_url + '</td>\n')
-    f.write('  <td>' + album_url + '</td>\n')
+    f.write('  <td>' + artist_url.encode('ascii', errors='replace') + '</td>\n')
+    f.write('  <td>' + track_url.encode('ascii', errors='replace') + '</td>\n')
+    f.write('  <td>' + album_url.encode('ascii', errors='replace') + '</td>\n')
     f.write('</tr>\n')
   f.write('</table>')
   f.write('</body></html>')

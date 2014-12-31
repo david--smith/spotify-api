@@ -33,10 +33,23 @@ def parse_for_songs(url):
 
 ##########################################################################
 
-url = 'http://somafm.com/dronezone/songhistory.html'
-songs, title = parse_for_songs(url)
-#title = 'somafm_dronezone'
-spotifier.output_songs(url, title, songs)
+urls = ['http://somafm.com/secretagent/songhistory.html',
+'http://somafm.com/sonicuniverse/songhistory.html',
+'http://somafm.com/dronezone/songhistory.html',
+'http://somafm.com/groovesalad/songhistory.html',
+'http://somafm.com/indiepop/songhistory.html',
+'http://somafm.com/spacestation/songhistory.html',
+'http://somafm.com/digitalis/songhistory.html',
+'http://somafm.com/earwaves/songhistory.html',
+'http://somafm.com/missioncontrol/songhistory.html',
+'http://somafm.com/u80s/songhistory.html',
+'http://somafm.com/illstreet/songhistory.html',
+'http://somafm.com/deepspaceone/songhistory.html',
+'http://somafm.com/suburbsofgoa/songhistory.html',
+'http://somafm.com/doomed/songhistory.html']
+for url in urls:
+  songs, title = parse_for_songs(url)
+  spotifier.output_songs(url, title, songs)
 
 
 
