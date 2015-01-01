@@ -37,7 +37,8 @@ def parse_for_songs(url):
 
 ##########################################################################
 
-urls = ['http://www.wxdu.org/plmanager/world/currentplaylist.php']
+urls = ['http://www.wxdu.org/plmanager/world/currentplaylist.php',
+  'http://www.wxdu.org/charts']
 for url in urls:
   songs, title = parse_for_songs(url)
   spotifier.output_songs(url, title, songs)

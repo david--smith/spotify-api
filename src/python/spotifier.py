@@ -83,7 +83,9 @@ def output_songs(url, title, songs, out_filename=None):
     if len(tracks) > 0:
       track_url = ''
       for track_info in tracks:
-        track_url+='<a href="{}">{}</a>&nbsp;&nbsp;'.format(track_info['uri'], track_info['name'])
+        track_url+='<a href="{}">{}</a>&nbsp;&nbsp;'.format(
+          track_info['uri'].encode('ascii', errors='replace'),
+          track_info['name'].encode('ascii', errors='replace'))
     else:
       track_url = track
 
