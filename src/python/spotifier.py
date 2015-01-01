@@ -21,7 +21,10 @@ def fetch_artist(artist):
 
   r = requests.get(url)
   r_json = r.json()
-  artist_matches = [artist_info for artist_info in r_json['artists']['items'] if artist_info['name'].lower() == artist.lower()]
+  try:
+    artist_matches = [artist_info for artist_info in r_json['artists']['items'] if artist_info['name'].lower() == artist.lower()]
+  except:
+    return []
   return artist_matches
 
 def fetch_track(artist, track):
