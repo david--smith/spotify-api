@@ -15,6 +15,31 @@ import webbrowser
 import requests
 from requests import Request, Session
 
+def get_auth_token(code):
+  CONFIG_FILE='config/settings.ini'
+  print "Config: {} exists? {}".format(CONFIG_FILE, os.path.isfile(CONFIG_FILE))
+  Config = ConfigParser.ConfigParser()
+  Config.read(CONFIG_FILE)
+  client_secret=Config.get('auth','clientSecret')
+  client_id=Config.get('auth', 'clientID')
+  username=Config.get('auth','user')
+  auth_raw = client_id + ':' + client_secret
+  auth_encoded = base64.b64encode(auth_raw)
+  print "{} = {}".format(auth_raw, auth_encoded)
+  headers = {'Authorization': 'Basic %s' % auth_encoded}
+  url = "https://accounts.spotify.com/api/token"
+  body = {
+    'grant_type': 'authorization_code',
+    'code': code,
+    'redirect_uri': 'http://localhost:8000/'
+  }
+  body_data = json.dumps(body)
+  print "\n\nGetting bearer token"
+  print "POST {} with:\n{}\nheaders: {}".format(url, body_data, headers)
+  r = requests.post(url,data=body, headers=headers)
+  print r.status_code, r.content
+  return r.json()['access_token']
+
 def login_user_to_spotify():
   CONFIG_FILE='config/settings.ini'
   print "Config: {} exists? {}".format(CONFIG_FILE, os.path.isfile(CONFIG_FILE))
