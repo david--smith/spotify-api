@@ -105,6 +105,8 @@ def fetch_wprb_playlist(url):
   f.write('<p>\n')
   f.write('<table border=1>')
   for song in songs:
+    if len(song)<3:
+      continue
     artist = song[0]
     track = song[1]
     album = song[2]
