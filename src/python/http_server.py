@@ -11,9 +11,11 @@ import thread
 import threading
 import SocketServer
 import requests
+import re
 
 class HTTPServerThread (threading.Thread):
   THREAD_DATA = None
+  AUTH_CODE = None
   def __init__(self, threadID, name, counter):
       threading.Thread.__init__(self)
       self.threadID = threadID
@@ -38,12 +40,17 @@ class MyTCPHandler(SocketServer.BaseRequestHandler):
       # self.request is the TCP socket connected to the client
       self.data = self.request.recv(1024).strip()
       #print "{} wrote:".format(self.client_address[0])
-      print 'SERVER RECEIVED: ', self.data
+      print 'SERVER RECEIVED: '
+      print '"""',self.data,'"""'
       HTTPServerThread.THREAD_DATA = self.data
       # just send back the same data, but upper-cased
       self.request.sendall(self.data.upper())
-
-
+      regex = re.compile("code=(.*)\sHTTP")
+#      r = regex.search(self.data)
+      matches = regex.findall(self.data)
+      print 'Matches: ', matches
+      if HTTPServerThread.AUTH_CODE == None and len(matches)>0:
+        HTTPServerThread.AUTH_CODE = matches[0]
 
 http_thread = HTTPServerThread(1, "Thread-1", 1)
 http_thread.start()
@@ -63,9 +70,10 @@ finally:
     sock.close()
 
 print "CLIENT Received: {}".format(received)
+
+spotifier.login_user_to_spotify()
+time.sleep(7)
 print ("Shutting down...")
 http_thread.shutdown()
-
-print "THREAD DATA: ", http_thread.THREAD_DATA
-spotifier.login_to_spotify()
+print "AUTH_CODE: ", http_thread.AUTH_CODE
 
