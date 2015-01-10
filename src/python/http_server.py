@@ -66,7 +66,6 @@ print "CLIENT Received: {}".format(received)
 print ("Shutting down...")
 http_thread.shutdown()
 
-print http_thread.THREAD_DATA
-print HTTPServerThread.THREAD_DATA
+print "THREAD DATA: ", http_thread.THREAD_DATA
 spotifier.login_to_spotify()
 
