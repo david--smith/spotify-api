@@ -10,7 +10,7 @@ import threading
 
 
 
-class myThread (threading.Thread):
+class httpServerThread (threading.Thread):
     def __init__(self, threadID, name, counter):
         threading.Thread.__init__(self)
         self.threadID = threadID
@@ -29,7 +29,7 @@ class myThread (threading.Thread):
     def shutdown(self):
       self.httpd.shutdown()
 
-http_thread = myThread(1, "Thread-1", 1)
+http_thread = httpServerThread(1, "Thread-1", 1)
 http_thread.start()
 print ('Did i get past serving? YES!')
 time.sleep(10)
