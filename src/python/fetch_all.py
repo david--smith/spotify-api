@@ -17,5 +17,9 @@ for provider in PROVIDERS:
   urls = provider.get_urls()
   for url in urls:
     songs, page_title = provider.parse_for_songs(url)
-    for song in songs:
-      print song
+    song_and_album_matches = spotifier.get_songs(songs)
+    song_matches = song_and_album_matches['matches']
+    song_uris = [song['uri'] for song in song_matches]
+    spotifier.add_tracks_to_playlist(song_uris, playlist_id)
+
+

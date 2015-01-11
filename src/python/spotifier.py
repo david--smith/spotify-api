@@ -23,6 +23,33 @@ REQUEST_HEADERS = None
 AUTH_CODE = None
 
 
+def get_songs(songs):
+  results = {
+    'matches':[],
+    'albums':[]
+  }
+  for song in songs:
+    artist = song['artist']
+    track = song['track']
+    album = song['album']
+    artists = fetch_artist(artist)
+    tracks = fetch_track(artist, track)
+    albums = fetch_album(album)
+
+    if len(tracks) > 0:
+      for track_info in tracks:
+        name = track_info['name']
+        print '\t...found {}'.format(name)
+        results['matches'].append({
+          'name': name,
+          'uri': track_info['uri']
+        })
+
+    if len(albums) > 0:
+      for album_info in albums:
+        results['albums'].append(album_info)
+  return results
+
 def add_tracks_to_playlist(track_uris, playlist_id):
   print 'Adding tracks to playlist...'
   url = 'https://api.spotify.com/v1/users/{}/playlists/{}/tracks'.format(USER_ID,playlist_id)
