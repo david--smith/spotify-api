@@ -137,10 +137,9 @@ def login_user_to_spotify():
   #print '----------'
   while http_thread.AUTH_CODE == None:
     time.sleep(.25)
-  print "AUTH_CODE: ", http_thread.AUTH_CODE
+  print "Obtained auth code..."
   AUTH_CODE = http_thread.AUTH_CODE
   access_token, headers = get_access_token(AUTH_CODE)
-  print 'TOKEN:',access_token
   print ("Shutting down HTTP server...")
   http_thread.shutdown()
   get_userid()

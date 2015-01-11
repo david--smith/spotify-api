@@ -40,8 +40,7 @@ class MyTCPHandler(SocketServer.BaseRequestHandler):
       self.data = self.request.recv(1024).strip()
       #print "{} wrote:".format(self.client_address[0])
       if HTTPServerThread.AUTH_CODE != None and 'favicon' not in self.data:
-        print 'SERVER RECEIVED: '
-        print '"""',self.data,'"""'
+        print 'HTTP SERVER received data...'
       HTTPServerThread.THREAD_DATA = self.data
       # just send back the same data, but upper-cased
       self.request.sendall("""
