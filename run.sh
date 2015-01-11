@@ -1,1 +1,1 @@
-src/python/test.py
+src/python/fetch_all.py
