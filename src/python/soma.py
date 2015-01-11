@@ -22,11 +22,13 @@ def parse_for_songs(url):
   for tr in trs:
     song_raw_text = [text for text in tr.strings]
     if len(song_raw_text) >=4 and song_raw_text[1].strip() != 'Artist':
-      song = {'artist': song_raw_text[1], 'track': song_raw_text[2], 'album': song_raw_text[3]}
-#      print song['artist'] + ' // ' + song['track'] + ' // ' + song['album']
+      song = {
+        'artist': song_raw_text[1].strip(),
+        'track': song_raw_text[2].strip(),
+        'album': song_raw_text[3].strip()
+        }
       songs.append(song)
   page_title = soup.title.text.strip()
-#  print 'TITLE: {}'.format(page_title)
   return songs, page_title
 
 
