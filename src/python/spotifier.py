@@ -53,8 +53,9 @@ def get_songs(songs):
 def add_tracks_to_playlist(track_uris, playlist_id, skip_tracks=set([])):
   print 'Adding tracks to playlist...'
   unique_tracks = list(set(track_uris))
+  tracks_to_add = [track for track in unique_tracks if track not in skip_tracks]
   url = 'https://api.spotify.com/v1/users/{}/playlists/{}/tracks'.format(USER_ID,playlist_id)
-  data = {'uris': unique_tracks}
+  data = {'uris': tracks_to_add}
   r = requests.post(url, data=json.dumps(data), headers=REQUEST_HEADERS)
   print 'Tracks added.'
 
@@ -77,7 +78,6 @@ def get_playlist_tracks(playlist_id):
     r_json = r.json()
     if not 'items' in r_json:
       break
-    print json.dumps(r_json, sort_keys=True, indent=2, separators=(',', ': '))
     uris = [ song['track']['uri'] for song in r_json['items'] ]
     new_uris = filter(lambda uri: uri not in track_uris, uris)
     track_uris |= set(new_uris)
