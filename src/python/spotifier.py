@@ -3,6 +3,7 @@
 import ConfigParser
 import datetime
 import os
+import time
 import re
 import spotipy
 import spotipy.util as util
@@ -14,19 +15,22 @@ import webbrowser
 
 import requests
 from requests import Request, Session
+import http_server_for_callbacks
 
 ACCESS_TOKEN = None
 USER_ID = None
 REQUEST_HEADERS = None
+AUTH_CODE = None
 
 def get_userid():
   global USER_ID
-  url = 'https://api.spotify.com/v1/me'
-  headers = headers = {'Authorization': 'Bearer %s' % ACCESS_TOKEN}
-  user = requests.get (url, headers=headers)
-  user_json = user.json()
-  print user_json
-  USER_ID = user_json['id']
+  if USER_ID == None:
+    url = 'https://api.spotify.com/v1/me'
+    headers = headers = {'Authorization': 'Bearer %s' % ACCESS_TOKEN}
+    user = requests.get (url, headers=headers)
+    user_json = user.json()
+    print user_json
+    USER_ID = user_json['id']
   return USER_ID
 
 def get_playlist(name):
@@ -54,6 +58,8 @@ def get_playlist(name):
 
 def get_access_token(code):
   global ACCESS_TOKEN, REQUEST_HEADERS
+  if ACCESS_TOKEN != None:
+    return ACCESS_TOKEN, REQUEST_HEADERS
   CONFIG_FILE='config/settings.ini'
   print "Config: {} exists? {}".format(CONFIG_FILE, os.path.isfile(CONFIG_FILE))
   Config = ConfigParser.ConfigParser()
@@ -83,6 +89,10 @@ def get_access_token(code):
   return ACCESS_TOKEN, REQUEST_HEADERS
 
 def login_user_to_spotify():
+  global AUTH_CODE
+  http_thread = http_server_for_callbacks.HTTPServerThread(1, "Thread-1", 1)
+  http_thread.start()
+  time.sleep(1)
   CONFIG_FILE='config/settings.ini'
   print "Config: {} exists? {}".format(CONFIG_FILE, os.path.isfile(CONFIG_FILE))
   Config = ConfigParser.ConfigParser()
@@ -117,12 +127,15 @@ def login_user_to_spotify():
   #r = requests.get(url, params=body)
   webbrowser.open(full_url)
   print '----------'
-#  print r.status_code, r.content
-#  r_json = r.json()
-#  print json.dumps(r_json, sort_keys=True, indent=2, separators=(',', ': '))
-#  token=r_json['access_token']
-#  return token, client_id
-
+  while http_thread.AUTH_CODE == None:
+    time.sleep(.25)
+  print "AUTH_CODE: ", http_thread.AUTH_CODE
+  AUTH_CODE = http_thread.AUTH_CODE
+  access_token, headers = get_access_token(AUTH_CODE)
+  print 'TOKEN:',access_token
+  print ("Shutting down HTTP server...")
+  http_thread.shutdown()
+  get_userid()
 
 def login_to_spotify():
   CONFIG_FILE='config/settings.ini'
