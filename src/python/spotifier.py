@@ -50,10 +50,11 @@ def get_songs(songs):
         results['albums'].append(album_info)
   return results
 
-def add_tracks_to_playlist(track_uris, playlist_id):
+def add_tracks_to_playlist(track_uris, playlist_id, skip_tracks=set([])):
   print 'Adding tracks to playlist...'
+  unique_tracks = list(set(track_uris))
   url = 'https://api.spotify.com/v1/users/{}/playlists/{}/tracks'.format(USER_ID,playlist_id)
-  data = {'uris': track_uris}
+  data = {'uris': unique_tracks}
   r = requests.post(url, data=json.dumps(data), headers=REQUEST_HEADERS)
   print 'Tracks added.'
 
