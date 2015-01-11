@@ -2,8 +2,9 @@
 
 import spotifier
 import provider_soma
+import provider_wprb
 
-PROVIDERS = [provider_soma]
+PROVIDERS = [provider_wprb, provider_soma]
 
 spotifier.login_user_to_spotify()
 

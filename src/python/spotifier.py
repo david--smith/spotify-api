@@ -37,6 +37,7 @@ def get_songs(songs):
     albums = fetch_album(album)
 
     if len(tracks) > 0:
+      """
       for track_info in tracks:
         name = track_info['name']
         print '\t...found {}'.format(name)
@@ -44,6 +45,14 @@ def get_songs(songs):
           'name': name,
           'uri': track_info['uri']
         })
+      """
+      track_info = tracks[0]
+      name = track_info['name']
+      print '\t...found {}'.format(name)
+      results['matches'].append({
+        'name': name,
+        'uri': track_info['uri']
+      })
 
     if len(albums) > 0:
       for album_info in albums:
