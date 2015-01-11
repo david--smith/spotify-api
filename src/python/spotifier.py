@@ -24,11 +24,11 @@ AUTH_CODE = None
 
 
 def add_tracks_to_playlist(track_uris, playlist_id):
+  print 'Adding tracks to playlist...'
   url = 'https://api.spotify.com/v1/users/{}/playlists/{}/tracks'.format(USER_ID,playlist_id)
   data = {'uris': track_uris}
-  print json.dumps(data)
   r = requests.post(url, data=json.dumps(data), headers=REQUEST_HEADERS)
-  print r.status_code, r.content
+  print 'Tracks added.'
 
 def get_userid():
   global USER_ID
@@ -86,7 +86,7 @@ def get_access_token(code):
     'redirect_uri': 'http://localhost:8000/'
   }
   body_data = json.dumps(body)
-  print "Getting bearer token"
+  print "Getting bearer token..."
   #print "POST {} with:\n{}\nheaders: {}".format(url, body_data, headers)
   r = requests.post(url,data=body, headers=headers)
   #print r.status_code, r.content
@@ -94,6 +94,7 @@ def get_access_token(code):
   ACCESS_TOKEN = token
   #print ACCESS_TOKEN
   REQUEST_HEADERS = {'Authorization': 'Bearer %s' % ACCESS_TOKEN, 'Content-Type': 'application/json'}
+  print "Obtained bearer token."
   return ACCESS_TOKEN, REQUEST_HEADERS
 
 def login_user_to_spotify():
