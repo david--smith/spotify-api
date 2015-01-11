@@ -12,6 +12,7 @@ import threading
 import SocketServer
 import requests
 import re
+import json
 
 class HTTPServerThread (threading.Thread):
   THREAD_DATA = None
@@ -63,5 +64,31 @@ print "AUTH_CODE: ", http_thread.AUTH_CODE
 
 access_token = spotifier.get_auth_token(http_thread.AUTH_CODE)
 print 'TOKEN:',access_token
+
+url = 'https://api.spotify.com/v1/me'
+headers = headers = {'Authorization': 'Bearer %s' % access_token}
+user = requests.get (url, headers=headers)
+user_json = user.json()
+print user_json
+user_id = user_json['id']
+print user_id
+
+url = 'https://api.spotify.com/v1/users/{}/playlists'.format(user_id)
+params = {'limit': 20}
+playlists = requests.get (url, params=params, headers=headers)
+playlists_json = playlists.json()
+print json.dumps(playlists_json, sort_keys=True, indent=2, separators=(',', ': '))
+for list in playlists_json['items']:
+  print list['name']
+
+print '------------------'
+params = {'type':'playlist','q':'GENERATED'}
+url = 'https://api.spotify.com/v1/users/{}/'
+generated = requests.get (url, headers=headers, params=params)
+print json.dumps(generated.json(), sort_keys=True, indent=2, separators=(',', ': '))
+
+
+
+
 print ("Shutting down...")
 http_thread.shutdown()
