@@ -68,6 +68,24 @@ def get_userid():
     USER_ID = user_json['id']
   return USER_ID
 
+def get_playlist_tracks(playlist_id):
+  track_uris = set([])
+  url = 'https://api.spotify.com/v1/users/{}/playlists/{}/tracks'.format(USER_ID, playlist_id)
+  while True:
+    r = requests.get(url, headers = REQUEST_HEADERS)
+    r_json = r.json()
+    if not 'items' in r_json:
+      break
+    print json.dumps(r_json, sort_keys=True, indent=2, separators=(',', ': '))
+    uris = [ song['track']['uri'] for song in r_json['items'] ]
+    new_uris = filter(lambda uri: uri not in track_uris, uris)
+    track_uris |= set(new_uris)
+    url = r_json['next']
+    if url == None or len(url.strip())==0:
+      break
+  return track_uris
+
+
 def get_playlist(name):
   print 'Looking for playlist {}'.format(name)
   index = 0

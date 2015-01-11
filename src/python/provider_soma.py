@@ -15,8 +15,8 @@ def get_playlist_name():
   return 'SOMA'
 
 def get_urls():
+  """
   urls = ['http://somafm.com/secretagent/songhistory.html',
-  #'http://somafm.com/sonicuniverse/songhistory.html',
   'http://somafm.com/dronezone/songhistory.html',
   'http://somafm.com/groovesalad/songhistory.html',
   'http://somafm.com/indiepop/songhistory.html',
@@ -27,6 +27,8 @@ def get_urls():
   'http://somafm.com/u80s/songhistory.html',
   'http://somafm.com/illstreet/songhistory.html'
   ]
+  """
+  urls = ['http://somafm.com/secretagent/songhistory.html']
   return urls
 
 
