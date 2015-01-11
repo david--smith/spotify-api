@@ -17,8 +17,8 @@ import json
 
 spotifier.login_user_to_spotify()
 playlist_id, playlist = spotifier.get_playlist('WXDU')
-print json.dumps(playlist, sort_keys=True, indent=2, separators=(',', ': ')), playlist_id
-
+#print json.dumps(playlist, sort_keys=True, indent=2, separators=(',', ': ')), playlist_id
+spotifier.add_tracks_to_playlist(['spotify:track:7pRG3TnLmhNurKn5NF58cX'], playlist_id)
 
 # spotify:track:7pRG3TnLmhNurKn5NF58cX
 

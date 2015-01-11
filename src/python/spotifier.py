@@ -22,12 +22,20 @@ USER_ID = None
 REQUEST_HEADERS = None
 AUTH_CODE = None
 
+
+def add_tracks_to_playlist(track_uris, playlist_id):
+  url = 'https://api.spotify.com/v1/users/{}/playlists/{}/tracks'.format(USER_ID,playlist_id)
+  data = {'uris': track_uris}
+  print json.dumps(data)
+  r = requests.post(url, data=json.dumps(data), headers=REQUEST_HEADERS)
+  print r.status_code, r.content
+
 def get_userid():
   global USER_ID
   if USER_ID == None:
     url = 'https://api.spotify.com/v1/me'
-    headers = headers = {'Authorization': 'Bearer %s' % ACCESS_TOKEN}
-    user = requests.get (url, headers=headers)
+#    headers = {'Authorization': 'Bearer %s' % ACCESS_TOKEN}
+    user = requests.get (url, headers=REQUEST_HEADERS)
     user_json = user.json()
     #print user_json
     USER_ID = user_json['id']
@@ -85,7 +93,7 @@ def get_access_token(code):
   token = r.json()['access_token']
   ACCESS_TOKEN = token
   #print ACCESS_TOKEN
-  REQUEST_HEADERS = {'Authorization': 'Bearer %s' % ACCESS_TOKEN}
+  REQUEST_HEADERS = {'Authorization': 'Bearer %s' % ACCESS_TOKEN, 'Content-Type': 'application/json'}
   return ACCESS_TOKEN, REQUEST_HEADERS
 
 def login_user_to_spotify():
