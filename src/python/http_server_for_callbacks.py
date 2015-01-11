@@ -44,7 +44,9 @@ class MyTCPHandler(SocketServer.BaseRequestHandler):
         print '"""',self.data,'"""'
       HTTPServerThread.THREAD_DATA = self.data
       # just send back the same data, but upper-cased
-      self.request.sendall(self.data.upper())
+      self.request.sendall("""
+        <script>window.close();</script>
+        """)
       regex = re.compile("code=(.*)\sHTTP")
       matches = regex.findall(self.data)
       if HTTPServerThread.AUTH_CODE == None and len(matches)>0:
