@@ -61,17 +61,19 @@ while http_thread.AUTH_CODE == None:
   time.sleep(.25)
 #time.sleep(7)
 print "AUTH_CODE: ", http_thread.AUTH_CODE
+spotifier.AUTH_CODE = http_thread.AUTH_CODE
 
-access_token = spotifier.get_auth_token(http_thread.AUTH_CODE)
+access_token, headers = spotifier.get_access_token(http_thread.AUTH_CODE)
 print 'TOKEN:',access_token
 
-url = 'https://api.spotify.com/v1/me'
-headers = headers = {'Authorization': 'Bearer %s' % access_token}
-user = requests.get (url, headers=headers)
-user_json = user.json()
-print user_json
-user_id = user_json['id']
-print user_id
+user_id = spotifier.get_userid()
+#url = 'https://api.spotify.com/v1/me'
+#headers = headers = {'Authorization': 'Bearer %s' % access_token}
+#user = requests.get (url, headers=headers)
+#user_json = user.json()
+#print user_json
+#user_id = user_json['id']
+#print user_id
 
 url = 'https://api.spotify.com/v1/users/{}/playlists'.format(user_id)
 params = {'limit': 20}
@@ -82,12 +84,12 @@ for list in playlists_json['items']:
   print list['name']
 
 print '------------------'
-params = {'type':'playlist','q':'GENERATED'}
-url = 'https://api.spotify.com/v1/users/{}/'
+params = {'type':'playlist','q':'WXDU'}
+url = 'https://api.spotify.com/v1/search'
 generated = requests.get (url, headers=headers, params=params)
 print json.dumps(generated.json(), sort_keys=True, indent=2, separators=(',', ': '))
 
-
+# spotify:track:7pRG3TnLmhNurKn5NF58cX
 
 
 print ("Shutting down...")

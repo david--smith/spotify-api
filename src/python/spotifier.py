@@ -15,7 +15,26 @@ import webbrowser
 import requests
 from requests import Request, Session
 
-def get_auth_token(code):
+ACCESS_TOKEN = None
+USER_ID = None
+REQUEST_HEADERS = None
+
+def get_userid():
+  global USER_ID
+  url = 'https://api.spotify.com/v1/me'
+  headers = headers = {'Authorization': 'Bearer %s' % ACCESS_TOKEN}
+  user = requests.get (url, headers=headers)
+  user_json = user.json()
+  print user_json
+  USER_ID = user_json['id']
+  return USER_ID
+
+def get_playlist():
+  pass
+
+
+def get_access_token(code):
+  global ACCESS_TOKEN, REQUEST_HEADERS
   CONFIG_FILE='config/settings.ini'
   print "Config: {} exists? {}".format(CONFIG_FILE, os.path.isfile(CONFIG_FILE))
   Config = ConfigParser.ConfigParser()
@@ -38,7 +57,11 @@ def get_auth_token(code):
   print "POST {} with:\n{}\nheaders: {}".format(url, body_data, headers)
   r = requests.post(url,data=body, headers=headers)
   print r.status_code, r.content
-  return r.json()['access_token']
+  token = r.json()['access_token']
+  ACCESS_TOKEN = token
+  print ACCESS_TOKEN
+  REQUEST_HEADERS = {'Authorization': 'Bearer %s' % ACCESS_TOKEN}
+  return ACCESS_TOKEN, REQUEST_HEADERS
 
 def login_user_to_spotify():
   CONFIG_FILE='config/settings.ini'
