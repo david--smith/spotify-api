@@ -29,7 +29,7 @@ def get_userid():
     headers = headers = {'Authorization': 'Bearer %s' % ACCESS_TOKEN}
     user = requests.get (url, headers=headers)
     user_json = user.json()
-    print user_json
+    #print user_json
     USER_ID = user_json['id']
   return USER_ID
 
@@ -61,7 +61,7 @@ def get_access_token(code):
   if ACCESS_TOKEN != None:
     return ACCESS_TOKEN, REQUEST_HEADERS
   CONFIG_FILE='config/settings.ini'
-  print "Config: {} exists? {}".format(CONFIG_FILE, os.path.isfile(CONFIG_FILE))
+  #print "Config: {} exists? {}".format(CONFIG_FILE, os.path.isfile(CONFIG_FILE))
   Config = ConfigParser.ConfigParser()
   Config.read(CONFIG_FILE)
   client_secret=Config.get('auth','clientSecret')
@@ -69,7 +69,7 @@ def get_access_token(code):
   username=Config.get('auth','user')
   auth_raw = client_id + ':' + client_secret
   auth_encoded = base64.b64encode(auth_raw)
-  print "{} = {}".format(auth_raw, auth_encoded)
+  #print "{} = {}".format(auth_raw, auth_encoded)
   headers = {'Authorization': 'Basic %s' % auth_encoded}
   url = "https://accounts.spotify.com/api/token"
   body = {
@@ -78,13 +78,13 @@ def get_access_token(code):
     'redirect_uri': 'http://localhost:8000/'
   }
   body_data = json.dumps(body)
-  print "\n\nGetting bearer token"
-  print "POST {} with:\n{}\nheaders: {}".format(url, body_data, headers)
+  print "Getting bearer token"
+  #print "POST {} with:\n{}\nheaders: {}".format(url, body_data, headers)
   r = requests.post(url,data=body, headers=headers)
-  print r.status_code, r.content
+  #print r.status_code, r.content
   token = r.json()['access_token']
   ACCESS_TOKEN = token
-  print ACCESS_TOKEN
+  #print ACCESS_TOKEN
   REQUEST_HEADERS = {'Authorization': 'Bearer %s' % ACCESS_TOKEN}
   return ACCESS_TOKEN, REQUEST_HEADERS
 
@@ -94,7 +94,7 @@ def login_user_to_spotify():
   http_thread.start()
   time.sleep(1)
   CONFIG_FILE='config/settings.ini'
-  print "Config: {} exists? {}".format(CONFIG_FILE, os.path.isfile(CONFIG_FILE))
+  #print "Config: {} exists? {}".format(CONFIG_FILE, os.path.isfile(CONFIG_FILE))
   Config = ConfigParser.ConfigParser()
   Config.read(CONFIG_FILE)
   client_secret=Config.get('auth','clientSecret')
@@ -113,7 +113,7 @@ def login_user_to_spotify():
   body_data = json.dumps(body)
   auth_raw = client_id + ':' + client_secret
   auth_encoded = base64.b64encode(auth_raw)
-  print "{} = {}".format(auth_raw, auth_encoded)
+  #print "{} = {}".format(auth_raw, auth_encoded)
   headers = {'Authorization': 'Basic %s' % auth_encoded}
   url = "https://accounts.spotify.com/authorize"
   req = Request('GET', url,
@@ -121,12 +121,12 @@ def login_user_to_spotify():
   )
   prepped_req = req.prepare()
   full_url = prepped_req.url
-  print '----------'
-  print 'GET request to: {}\nWith headers: {}\nWith body: {}'.format(url, headers, body_data)
-  print '\n\n', full_url
+  #print '----------'
+  #print 'GET request to: {}\nWith headers: {}\nWith body: {}'.format(url, headers, body_data)
+  #print '\n\n', full_url
   #r = requests.get(url, params=body)
   webbrowser.open(full_url)
-  print '----------'
+  #print '----------'
   while http_thread.AUTH_CODE == None:
     time.sleep(.25)
   print "AUTH_CODE: ", http_thread.AUTH_CODE
@@ -136,35 +136,6 @@ def login_user_to_spotify():
   print ("Shutting down HTTP server...")
   http_thread.shutdown()
   get_userid()
-
-def login_to_spotify():
-  CONFIG_FILE='config/settings.ini'
-  print "Config: {} exists? {}".format(CONFIG_FILE, os.path.isfile(CONFIG_FILE))
-  Config = ConfigParser.ConfigParser()
-  Config.read(CONFIG_FILE)
-  client_secret=Config.get('auth','clientSecret')
-  client_id=Config.get('auth', 'clientID')
-  username=Config.get('auth','user')
-
-  ####################
-  # Authorization
-  ####################
-  body = {'grant_type': 'client_credentials', 'scope':'playlist-modify-public playlist-modify-private '}
-  body_data = json.dumps(body)
-  auth_raw = client_id + ':' + client_secret
-  auth_encoded = base64.b64encode(auth_raw)
-  print "{} = {}".format(auth_raw, auth_encoded)
-  headers = {'Authorization': 'Basic %s' % auth_encoded}
-  url = "https://accounts.spotify.com/api/token"
-  print '----------'
-  print 'POST request to: {}\nWith headers: {}\nWith body: {}'.format(url, headers, body_data)
-  r = requests.post(url, data=body, headers=headers)
-  print '----------'
-  print r.status_code, r.content
-  r_json = r.json()
-  print json.dumps(r_json, sort_keys=True, indent=2, separators=(',', ': '))
-  token=r_json['access_token']
-  return token, client_id
 
 
 def fetch_artist(artist):

@@ -16,8 +16,6 @@ import json
 
 
 spotifier.login_user_to_spotify()
-
-#user_id = spotifier.USER_ID
 playlist_id, playlist = spotifier.get_playlist('WXDU')
 print json.dumps(playlist, sort_keys=True, indent=2, separators=(',', ': ')), playlist_id
 
