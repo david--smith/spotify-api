@@ -67,27 +67,17 @@ access_token, headers = spotifier.get_access_token(http_thread.AUTH_CODE)
 print 'TOKEN:',access_token
 
 user_id = spotifier.get_userid()
-#url = 'https://api.spotify.com/v1/me'
-#headers = headers = {'Authorization': 'Bearer %s' % access_token}
-#user = requests.get (url, headers=headers)
-#user_json = user.json()
-#print user_json
-#user_id = user_json['id']
-#print user_id
 
-url = 'https://api.spotify.com/v1/users/{}/playlists'.format(user_id)
-params = {'limit': 20}
-playlists = requests.get (url, params=params, headers=headers)
-playlists_json = playlists.json()
-print json.dumps(playlists_json, sort_keys=True, indent=2, separators=(',', ': '))
-for list in playlists_json['items']:
-  print list['name']
+#url = 'https://api.spotify.com/v1/users/{}/playlists'.format(user_id)
+#params = {'limit': 20}
+#playlists = requests.get (url, params=params, headers=headers)
+#playlists_json = playlists.json()
+#print json.dumps(playlists_json, sort_keys=True, indent=2, separators=(',', ': '))
+#for list in playlists_json['items']:
+#  print list['name']
+playlist_id, playlist = spotifier.get_playlist('WXDU')
+print json.dumps(playlist, sort_keys=True, indent=2, separators=(',', ': ')), playlist_id
 
-print '------------------'
-params = {'type':'playlist','q':'WXDU'}
-url = 'https://api.spotify.com/v1/search'
-generated = requests.get (url, headers=headers, params=params)
-print json.dumps(generated.json(), sort_keys=True, indent=2, separators=(',', ': '))
 
 # spotify:track:7pRG3TnLmhNurKn5NF58cX
 

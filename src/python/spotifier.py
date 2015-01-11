@@ -29,9 +29,17 @@ def get_userid():
   USER_ID = user_json['id']
   return USER_ID
 
-def get_playlist():
-  pass
-
+def get_playlist(name):
+  url = 'https://api.spotify.com/v1/users/{}/playlists'.format(USER_ID)
+  params = {'limit': 20}
+  playlists = requests.get (url, params=params, headers=REQUEST_HEADERS)
+  playlists_json = playlists.json()
+  #print json.dumps(playlists_json, sort_keys=True, indent=2, separators=(',', ': '))
+  for list in playlists_json['items']:
+    print list['name']
+    if list['name'] == name:
+      return list['id'], list
+  return {}
 
 def get_access_token(code):
   global ACCESS_TOKEN, REQUEST_HEADERS
