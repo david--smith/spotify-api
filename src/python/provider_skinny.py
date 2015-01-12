@@ -43,9 +43,23 @@ def parse_for_songs(url):
     title_text = [text for text in title.stripped_strings]
     regex = re.compile(ur'^(.*)\u2013(.*)$')
     matches = regex.findall(title_text[0])
-    print matches[0][0], matches [0][1]
+    artist = matches[0][0].strip()
+    album = matches[0][1].strip()
+    print artist, '>', album
+    albums = spotifier.fetch_album(album)
+    for album in albums:
+      album_artist = album['artist']
+      if album_artist.lower() != artist.lower():
+        continue
+      album_id = album['id']
+      tracks = spotifier.get_album_tracks(album_id)
+      if len(tracks) < 1:
+        continue
+      songs.append({'uri': tracks[0]['uri']})
   return songs, page_title
 
-urls = get_urls()
-for url in urls:
-  parse_for_songs(url)
+###########################
+#spotifier.login_user_to_spotify()
+#urls = get_urls()
+#for url in urls:
+#  parse_for_songs(url)

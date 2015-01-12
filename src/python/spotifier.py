@@ -23,6 +23,15 @@ REQUEST_HEADERS = None
 AUTH_CODE = None
 
 
+def get_album_tracks (album_id):
+  url = "https://api.spotify.com/v1/albums/{}/tracks".format(album_id)
+  print '\tLooking up album tracks: ',url
+  r = requests.get(url, headers=REQUEST_HEADERS)
+  if r.status_code != 200:
+    return []
+  r_json = r.json()
+  return r_json['items']
+
 def get_songs(songs):
   results = {
     'matches':[],
