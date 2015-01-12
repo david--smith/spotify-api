@@ -6,9 +6,11 @@ import provider_wprb
 import provider_wxdu
 
 PROVIDERS = [
-  provider_wxdu
-#  , provider_wprb
-#  , provider_soma
+#  provider_wxdu
+#  ,
+#  provider_wprb
+#  ,
+  provider_soma
 ]
 
 spotifier.login_user_to_spotify()

@@ -138,7 +138,7 @@ def get_access_token(code):
   body = {
     'grant_type': 'authorization_code',
     'code': code,
-    'redirect_uri': 'http://localhost:8000/'
+    'redirect_uri': 'http://127.0.0.1:8000'
   }
   body_data = json.dumps(body)
   print "Getting bearer token..."
@@ -171,7 +171,7 @@ def login_user_to_spotify():
   body = {
     'client_id': client_id,
     'response_type': 'code',
-    'redirect_uri': 'http://localhost:8000/',
+    'redirect_uri': 'http://127.0.0.1:8000',
     'scope':'playlist-modify-public playlist-modify-private playlist-read-private '
   }
   body_data = json.dumps(body)
