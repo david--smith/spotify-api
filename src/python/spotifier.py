@@ -23,6 +23,23 @@ REQUEST_HEADERS = None
 AUTH_CODE = None
 
 
+def follows(ids, type='artist'):
+  url = "https://api.spotify.com/v1/me/following/contains"
+  if isinstance(ids, str):
+    ids = [ids]
+  params = {
+    'type': type,
+    'ids': ids
+  }
+  #print 'Asking follow for IDS: {}'.format(ids)
+  r = requests.get(url, params=params, headers=REQUEST_HEADERS)
+  if r.status_code != 200:
+    print 'Error ', r, r.text
+    return [False]*len(ids)
+  r_json = r.json()
+  return r_json
+
+
 def get_album_tracks (album_id):
   url = "https://api.spotify.com/v1/albums/{}/tracks".format(album_id)
   print '\tLooking up album tracks: ',url
@@ -41,7 +58,7 @@ def get_songs(songs):
     artist = song['artist']
     track = song['track']
     album = song['album']
-    artists = fetch_artist(artist)
+    #artists = fetch_artist(artist)
     tracks = fetch_track(artist, track)
     albums = fetch_album(album)
 
@@ -181,7 +198,7 @@ def login_user_to_spotify():
     'client_id': client_id,
     'response_type': 'code',
     'redirect_uri': 'http://127.0.0.1:8000',
-    'scope':'playlist-modify-public playlist-modify-private playlist-read-private '
+    'scope':'playlist-modify-public playlist-modify-private playlist-read-private playlist-read-private user-follow-read user-read-private'
   }
   body_data = json.dumps(body)
   auth_raw = client_id + ':' + client_secret
@@ -229,7 +246,6 @@ def fetch_track(artist, track):
     url = 'https://api.spotify.com/v1/search?q={}&type=track'.format(track)
   except:
     return []
-#  r = requests.get(url, headers=headers)
   r = requests.get(url)
   if r.status_code == 400:
     return []
