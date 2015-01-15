@@ -22,7 +22,8 @@ def has_href_printplaylist(tag):
 
 def get_urls():
   urls = []
-  show_history_urls = [
+  show_history_urls = list(set(
+  ['http://wprb.com/tpm/world/printplaylist.php?show_id=65',
   'http://wprb.com/tpm/world/djplaylists.php?id=511',
   'http://wprb.com/tpm/world/djplaylists.php?id=425',
   'http://wprb.com/tpm/world/djplaylists.php?id=435',
@@ -30,8 +31,26 @@ def get_urls():
   'http://wprb.com/tpm/world/djplaylists.php?id=443',
   'http://wprb.com/tpm/world/djplaylists.php?id=415',
   'http://wprb.com/tpm/world/djplaylists.php?id=104',
-  'http://wprb.com/tpm/world/djplaylists.php?id=528'
-  ]
+  'http://wprb.com/tpm/world/djplaylists.php?id=528',
+  'http://wprb.com/tpm/world/djplaylists.php?id=504',
+  'http://wprb.com/tpm/world/djplaylists.php?id=503',
+  'http://wprb.com/tpm/world/djplaylists.php?id=388',
+  'http://wprb.com/tpm/world/djplaylists.php?id=352',
+  'http://wprb.com/tpm/world/djplaylists.php?id=526',
+  'http://wprb.com/tpm/world/djplaylists.php?id=281',
+  'http://wprb.com/tpm/world/djplaylists.php?id=509',
+  'http://wprb.com/tpm/world/djplaylists.php?id=415',
+  'http://wprb.com/tpm/world/djplaylists.php?id=511',
+  'http://wprb.com/tpm/world/djplaylists.php?id=526',
+  'http://wprb.com/tpm/world/djplaylists.php?id=461',
+  'http://wprb.com/tpm/world/djplaylists.php?id=435',
+  'http://wprb.com/tpm/world/djplaylists.php?id=20',
+  'http://wprb.com/tpm/world/djplaylists.php?id=530',
+  'http://wprb.com/tpm/world/djplaylists.php?id=512',
+  'http://wprb.com/tpm/world/djplaylists.php?id=162',
+  'http://wprb.com/tpm/world/djplaylists.php?id=104',
+  'http://wprb.com/tpm/world/djplaylists.php?id=8',
+  ]))
   for url in show_history_urls:
     r = requests.get(url)
     soup = BeautifulSoup(r.content)

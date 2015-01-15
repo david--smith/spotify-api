@@ -9,11 +9,11 @@ import provider_skinny
 PROVIDERS = [
 #  provider_wxdu
 #  ,
-#  provider_wprb
+  provider_wprb
 #  ,
 #  provider_soma
 #  ,
-  provider_skinny
+#  provider_skinny
 ]
 
 spotifier.login_user_to_spotify()
