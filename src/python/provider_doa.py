@@ -46,8 +46,17 @@ def parse_for_songs(url):
   r = requests.get(url)
   soup = BeautifulSoup(r.content)
   title_tags = soup.find_all(is_entry_title)
+  regex = re.compile(ur'^(.*)\u2013(.*)$')
   for title in title_tags:
-    print title
+    title_text = title.a.text
+    #print title_text
+    matches = regex.findall(title_text)
+    if len(matches) == 0 or len(matches[0])<2:
+      print '\tno matches...?', matches
+      continue
+    artist = matches[0][0].strip()
+    album = matches[0][1].strip()
+    print '\t', 'FOUND:', artist, album
   songs = []
 #  for tr in trs:
 #    song = [text for text in tr.stripped_strings]
