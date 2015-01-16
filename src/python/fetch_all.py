@@ -5,11 +5,13 @@ import provider_soma
 import provider_wprb
 import provider_wxdu
 import provider_skinny
+import provider_doa
 
 PROVIDERS = [
 #  provider_wxdu,
 #  provider_wprb,
-  provider_soma,
+#  provider_soma,
+  provider_doa,
 #  provider_skinny,
 ]
 

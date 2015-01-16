@@ -49,32 +49,30 @@ def parse_for_songs(url):
   regex = re.compile(ur'^(.*)\u2013(.*)$')
   for title in title_tags:
     title_text = title.a.text
-    #print title_text
     matches = regex.findall(title_text)
     if len(matches) == 0 or len(matches[0])<2:
       print '\tno matches...?', matches
       continue
     artist = matches[0][0].strip()
     album = matches[0][1].strip()
-    print '\t', 'FOUND:', artist, album
+    print '\t', 'FOUND:', artist, '>', album
   songs = []
-#  for tr in trs:
-#    song = [text for text in tr.stripped_strings]
-#    if len(song) >= 3 and song[0] != 'Artist':
-#      artist = song[0]
-#      track = song[1]
-#      album = song[2]
-#      songs.append({
-#        'artist': artist,
-#        'track': track,
-#        'album': album
-#      })
-  #page_title = soup.title.text.strip()
+  albums = spotifier.fetch_album(album)
+  for album in albums:
+    album_artist = album['artist']
+    if album_artist.lower() != artist.lower():
+      continue
+    album_id = album['id']
+    tracks = spotifier.get_album_tracks(album_id)
+    if len(tracks) < 1:
+      continue
+    songs.append({'uri': tracks[0]['uri']})
   page_title = 'DOA'
   return songs, page_title
 
 
 ###############################
-urls = get_urls()
-for url in urls:
-  songs, page_title = parse_for_songs(url)
+#urls = get_urls()
+#for url in urls:
+#  songs, page_title = parse_for_songs(url)
+#  print songs
