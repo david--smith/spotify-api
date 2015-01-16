@@ -74,7 +74,10 @@ def get_songs(songs):
       """
       track_info = tracks[0]
       name = track_info['name']
-      print '\t...found {}'.format(name)
+      print '\t...found {} by {}'.format(
+        name.encode('ascii', errors='replace'),
+        artist.encode('ascii', errors='replace')
+      )
       results['matches'].append({
         'name': name,
         'uri': track_info['uri']
