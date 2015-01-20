@@ -42,7 +42,7 @@ def follows(ids, type='artist'):
 
 def get_album_tracks (album_id):
   url = "https://api.spotify.com/v1/albums/{}/tracks".format(album_id)
-  print '\tLooking up album tracks: ',url
+  #print '\tLooking up album tracks: ',url
   r = requests.get(url, headers=REQUEST_HEADERS)
   if r.status_code != 200:
     return []
@@ -89,9 +89,11 @@ def get_songs(songs):
   return results
 
 def add_tracks_to_playlist(track_uris, playlist_id, skip_tracks=set([])):
-  print 'Adding tracks to playlist...'
+  print 'Begin adding {} tracks to playlist...'.format(len(track_uris))
   unique_tracks = list(set(track_uris))
+  print '\t...unique tracks in original set: {}'.format(len(unique_tracks))
   tracks_to_add = [track for track in unique_tracks if track not in skip_tracks]
+  print '\t...unique tracks NOT already in playlist: {}'.format(len(tracks_to_add))
   url = 'https://api.spotify.com/v1/users/{}/playlists/{}/tracks'.format(USER_ID,playlist_id)
   data = {'uris': tracks_to_add}
   r = requests.post(url, data=json.dumps(data), headers=REQUEST_HEADERS)

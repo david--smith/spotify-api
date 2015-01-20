@@ -6,12 +6,14 @@ import provider_wprb
 import provider_wxdu
 import provider_skinny
 import provider_doa
+import provider_pitchfork
 
 PROVIDERS = [
-#  provider_wxdu,
+  provider_pitchfork,
+  provider_wxdu,
 #  provider_wprb,
-#  provider_soma,
-  provider_doa,
+#  provider_doa,
+  provider_soma,
 #  provider_skinny,
 ]
 

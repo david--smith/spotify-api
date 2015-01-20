@@ -36,6 +36,22 @@ def get_urls():
   'http://www.adequacy.net/category/reviews/page/2/',
   'http://www.adequacy.net/category/reviews/page/3/',
   'http://www.adequacy.net/category/reviews/page/4/',
+  'http://www.adequacy.net/category/reviews/page/5/',
+  'http://www.adequacy.net/category/reviews/page/6/',
+  'http://www.adequacy.net/category/reviews/page/7/',
+  'http://www.adequacy.net/category/reviews/page/8/',
+  'http://www.adequacy.net/category/reviews/page/9/',
+  'http://www.adequacy.net/category/reviews/page/10/',
+  'http://www.adequacy.net/category/reviews/page/11/',
+  'http://www.adequacy.net/category/reviews/page/12/',
+  'http://www.adequacy.net/category/reviews/page/13/',
+  'http://www.adequacy.net/category/reviews/page/14/',
+  'http://www.adequacy.net/category/reviews/page/15/',
+  'http://www.adequacy.net/category/reviews/page/16/',
+  'http://www.adequacy.net/category/reviews/page/17/',
+  'http://www.adequacy.net/category/reviews/page/18/',
+  'http://www.adequacy.net/category/reviews/page/19/',
+  'http://www.adequacy.net/category/reviews/page/20/',
   ]))
 
   return urls
@@ -55,7 +71,9 @@ def parse_for_songs(url):
       continue
     artist = matches[0][0].strip()
     album = matches[0][1].strip()
-    print '\t', 'FOUND:', artist, '>', album
+    if album.lower() == 's/t' or album.lower() == 'self-titled':
+      album = artist
+#    print '\t', 'FOUND:', artist, '>', album
   songs = []
   albums = spotifier.fetch_album(album)
   for album in albums:
@@ -67,6 +85,9 @@ def parse_for_songs(url):
     if len(tracks) < 1:
       continue
     songs.append({'uri': tracks[0]['uri']})
+    print "{}: {}".format(album_artist, album['name'])
+    break
+
   page_title = 'DOA'
   return songs, page_title
 
