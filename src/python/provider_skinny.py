@@ -43,6 +43,8 @@ def parse_for_songs(url):
     title_text = [text for text in title.stripped_strings]
     regex = re.compile(ur'^(.*)\u2013(.*)$')
     matches = regex.findall(title_text[0])
+    if len(matches) < 1 or len (matches[0]) < 2:
+      continue
     artist = matches[0][0].strip()
     album = matches[0][1].strip()
     print artist, '>', album

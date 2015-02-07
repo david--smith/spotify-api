@@ -11,10 +11,10 @@ import provider_pitchfork
 PROVIDERS = [
   provider_pitchfork,
   provider_wxdu,
-#  provider_wprb,
-#  provider_doa,
+  provider_wprb,
+  provider_doa,
   provider_soma,
-#  provider_skinny,
+  provider_skinny,
 ]
 
 spotifier.login_user_to_spotify()
