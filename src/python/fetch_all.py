@@ -7,14 +7,16 @@ import provider_wxdu
 import provider_skinny
 import provider_doa
 import provider_pitchfork
+import provider_blackcat
 
 PROVIDERS = [
-  provider_pitchfork,
-  provider_wxdu,
-  provider_wprb,
-  provider_doa,
-  provider_soma,
-  provider_skinny,
+#  provider_pitchfork,
+# provider_wxdu,
+#  provider_wprb,
+#  provider_doa,
+#  provider_soma,
+#  provider_skinny,
+  provider_blackcat,
 ]
 
 spotifier.login_user_to_spotify()

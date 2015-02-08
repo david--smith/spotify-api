@@ -55,14 +55,22 @@ def parse_for_songs(url):
 #    artists = spotifier.fetch_artist(band_name)
 #    print artists
     albums = spotifier.get_albums_for_artist(band_name)
+    if len(albums) == 0:
+      continue
     print 'Found {} albums'.format(len(albums))
+    for album in albums:
+      tracks = spotifier.get_album_tracks(album['id'])
+      if len(tracks) < 1:
+        continue
+      songs.append({'uri': tracks[0]['uri']})
+      break
 
   page_title = 'BLACKCAT'
   return songs, page_title
 
 
 ###############################
-urls = get_urls()
-for url in urls:
-  songs, page_title = parse_for_songs(url)
-  print songs
+#urls = get_urls()
+#for url in urls:
+#  songs, page_title = parse_for_songs(url)
+#  print songs
