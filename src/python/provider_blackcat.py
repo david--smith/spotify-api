@@ -28,10 +28,6 @@ def is_band_tag(tag):
 
   if not is_headline and not is_support:
     return False
-#  if is_headline:
-#    print 'headline:' + str(tag)
-#  else:
-#    print tag.text
   return True
 
 
