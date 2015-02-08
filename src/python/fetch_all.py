@@ -8,6 +8,7 @@ import provider_skinny
 import provider_doa
 import provider_pitchfork
 import provider_blackcat
+import provider_dc9
 
 PROVIDERS = [
 #  provider_pitchfork,
@@ -16,7 +17,8 @@ PROVIDERS = [
 #  provider_doa,
 #  provider_soma,
 #  provider_skinny,
-  provider_blackcat,
+#  provider_blackcat,
+  provider_dc9,
 ]
 
 spotifier.login_user_to_spotify()
