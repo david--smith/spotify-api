@@ -10,6 +10,7 @@ import provider_pitchfork
 import provider_blackcat
 import provider_dc9
 import provider_rock_hotel
+import provider_velvet
 
 PROVIDERS = [
 #  provider_pitchfork,
@@ -20,7 +21,8 @@ PROVIDERS = [
 #  provider_skinny,
 #  provider_blackcat,
 #  provider_dc9,
-  provider_rock_hotel,
+#  provider_rock_hotel,
+  provider_velvet,
 ]
 
 spotifier.login_user_to_spotify()
