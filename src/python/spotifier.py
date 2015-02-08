@@ -40,6 +40,24 @@ def follows(ids, type='artist'):
   return r_json
 
 
+def get_albums_for_artist(artist):
+  artists = fetch_artist(artist)
+  if len(artists) == 0:
+    return []
+  albums = []
+  for artist in artists:
+    #print artist
+    artist_id = artist['id']
+    url = "https://api.spotify.com/v1/artists/{}/albums".format(artist_id)
+    r = requests.get(url, headers=REQUEST_HEADERS)
+    if r.status_code != 200:
+      return []
+    r_json = r.json()
+    for album in r_json['items']:
+      print '\t' + album['name'] + '/' + album['id']
+      albums.append(album)
+  return albums
+
 def get_album_tracks (album_id):
   url = "https://api.spotify.com/v1/albums/{}/tracks".format(album_id)
   #print '\tLooking up album tracks: ',url
