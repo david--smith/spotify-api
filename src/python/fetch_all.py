@@ -4,6 +4,7 @@ import spotifier
 import provider_soma
 import provider_wprb
 import provider_wxdu
+import provider_wxyc
 import provider_skinny
 import provider_doa
 import provider_pitchfork
@@ -14,21 +15,34 @@ import provider_velvet
 import provider_ustreet
 import provider_comet
 
-PROVIDERS = [
-#  provider_pitchfork,
-# provider_wxdu,
-#  provider_wprb,
-#  provider_doa,
-#  provider_soma,
-#  provider_skinny,
-#  provider_blackcat,
-#  provider_dc9,
-#  provider_rock_hotel,
-#  provider_velvet,
-#  provider_ustreet,
+RADIO = [
+  provider_wxdu,
+  provider_wxyc,
+  provider_wprb,
+  provider_soma,
+]
+SHOWS = [
+  provider_blackcat,
+  provider_dc9,
+  provider_rock_hotel,
+  provider_velvet,
+  provider_ustreet,
   provider_comet,
 ]
+REVIEWS = [
+  provider_pitchfork,
+  provider_doa,
+  provider_skinny,
+]
+EMPTY = []
 
+
+PROVIDERS = set (
+  #RADIO +
+  SHOWS +
+  #REVIEWS +
+  []
+  )
 spotifier.login_user_to_spotify()
 
 for provider in PROVIDERS:
