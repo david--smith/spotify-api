@@ -19,7 +19,7 @@ RADIO = [
   provider_wxdu,
   provider_wxyc,
   provider_wprb,
-  provider_soma,
+  #provider_soma,
 ]
 SHOWS = [
   provider_blackcat,
@@ -34,13 +34,11 @@ REVIEWS = [
   provider_doa,
   provider_skinny,
 ]
-EMPTY = []
-
 
 PROVIDERS = set (
-  #RADIO +
+  RADIO +
   SHOWS +
-  #REVIEWS +
+  REVIEWS +
   []
   )
 spotifier.login_user_to_spotify()

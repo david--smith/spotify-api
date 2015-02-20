@@ -272,6 +272,8 @@ def fetch_track(artist, track):
   if r.status_code == 400:
     return []
   r_json = r.json()
+  if 'tracks' not in r_json:
+    return []
   track_matches = [track_info for track_info in r_json['tracks']['items'] if track_info['name'].lower() == track.lower() and track_info['artists'][0]['name'].lower() == artist.lower()]
   return track_matches
 
