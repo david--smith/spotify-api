@@ -15,16 +15,16 @@ def get_playlist_name():
   return 'SOMA'
 
 def get_urls():
-  urls = ['http://somafm.com/secretagent/songhistory.html',
+  urls = [#'http://somafm.com/secretagent/songhistory.html',
   'http://somafm.com/dronezone/songhistory.html',
-  'http://somafm.com/groovesalad/songhistory.html',
+  #'http://somafm.com/groovesalad/songhistory.html',
   'http://somafm.com/indiepop/songhistory.html',
   'http://somafm.com/spacestation/songhistory.html',
   'http://somafm.com/digitalis/songhistory.html',
   'http://somafm.com/earwaves/songhistory.html',
   'http://somafm.com/missioncontrol/songhistory.html',
   'http://somafm.com/u80s/songhistory.html',
-  'http://somafm.com/illstreet/songhistory.html'
+  #'http://somafm.com/illstreet/songhistory.html'
   ]
   return urls
 

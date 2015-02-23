@@ -19,7 +19,7 @@ RADIO = [
   provider_wxdu,
   provider_wxyc,
   provider_wprb,
-  #provider_soma,
+  provider_soma,
 ]
 SHOWS = [
   provider_blackcat,
