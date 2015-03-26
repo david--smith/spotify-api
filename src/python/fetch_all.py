@@ -14,20 +14,22 @@ import provider_rock_hotel
 import provider_velvet
 import provider_ustreet
 import provider_comet
+import provider_kexp
 
 RADIO = [
   provider_wxdu,
   provider_wxyc,
   provider_wprb,
   provider_soma,
+  provider_kexp,
 ]
 SHOWS = [
-  provider_blackcat,
-  provider_dc9,
-  provider_rock_hotel,
-  provider_velvet,
   provider_ustreet,
+  provider_velvet,
   provider_comet,
+  provider_dc9,
+  provider_blackcat,
+  provider_rock_hotel,
 ]
 REVIEWS = [
   provider_pitchfork,
