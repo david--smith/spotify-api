@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import os
+import string
 import re
 import datetime
 import requests
@@ -14,20 +15,17 @@ from bs4 import BeautifulSoup
 import spotifier
 
 def get_playlist_name():
-  return 'ROCKNESS'
+  return 'SXSW'
 
 def get_urls():
-  urls = ['http://www.ohmyrockness.com/bands',
-  'http://www.ohmyrockness.com/bands?page=2',
-  'http://www.ohmyrockness.com/bands?page=3',
-  'http://www.ohmyrockness.com/bands?page=4',
-  'http://www.ohmyrockness.com/bands?page=5',
-  ]
+  urls = []
+  for x in string.lowercase[:26]:
+    urls.append('http://schedule.sxsw.com/?conference=music&lsort=name&day=ALL&event_type=showcase&a='+x)
   return urls
 
 
 def is_band(tag):
-  return tag.name == 'span' and 'class' in tag.attrs and 'bandname' == tag.attrs['class'][0]
+  return tag.name == 'a' and 'class' in tag.attrs and 'link_item' == tag.attrs['class'][0]
 
 def parse_for_songs(url):
   r = requests.get(url)
@@ -48,7 +46,7 @@ def parse_for_songs(url):
       songs.append({'uri': tracks[0]['uri']})
       break
 
-  page_title = 'ROCKNESS'
+  page_title = 'SXSW'
   return songs, page_title
 
 ##############################################

@@ -16,9 +16,11 @@ import provider_ustreet
 import provider_comet
 import provider_kexp
 import provider_ohmyrockness
+import provider_sxsw
 
 GENERAL = [
-  provider_ohmyrockness,
+#  provider_ohmyrockness,
+  provider_sxsw,
 ]
 
 RADIO = [
