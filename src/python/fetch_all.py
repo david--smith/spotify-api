@@ -15,6 +15,11 @@ import provider_velvet
 import provider_ustreet
 import provider_comet
 import provider_kexp
+import provider_ohmyrockness
+
+GENERAL = [
+  provider_ohmyrockness,
+]
 
 RADIO = [
   provider_wxdu,
@@ -38,9 +43,10 @@ REVIEWS = [
 ]
 
 PROVIDERS = set (
-  RADIO +
-  SHOWS +
-  REVIEWS +
+  GENERAL +
+#  RADIO +
+#  SHOWS +
+#  REVIEWS +
   []
   )
 spotifier.login_user_to_spotify()

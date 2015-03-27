@@ -1,0 +1,58 @@
+#!/usr/bin/python
+
+import os
+import re
+import datetime
+import requests
+import spotipy
+import spotipy.util as util
+import json
+import base64
+from slugify import slugify
+from bs4 import BeautifulSoup
+
+import spotifier
+
+def get_playlist_name():
+  return 'ROCKNESS'
+
+def get_urls():
+  urls = ['http://www.ohmyrockness.com/bands',
+  'http://www.ohmyrockness.com/bands?page=2',
+  'http://www.ohmyrockness.com/bands?page=3',
+  'http://www.ohmyrockness.com/bands?page=4',
+  'http://www.ohmyrockness.com/bands?page=5',
+  ]
+  return urls
+
+
+def is_band(tag):
+  return tag.name == 'span' and 'class' in tag.attrs and 'bandname' == tag.attrs['class'][0]
+
+def parse_for_songs(url):
+  r = requests.get(url)
+  soup = BeautifulSoup(r.content)
+  band_tags = soup.find_all(is_band)
+  songs = []
+  bands = []
+  for tag in band_tags:
+    band_name = tag.text.strip()
+    albums = spotifier.get_albums_for_artist(band_name)
+    if len(albums) == 0:
+      continue
+    print '\tBand: {} -- Found {} albums'.format(band_name, len(albums))
+    for album in albums:
+      tracks = spotifier.get_album_tracks(album['id'])
+      if len(tracks) < 1:
+        continue
+      songs.append({'uri': tracks[0]['uri']})
+      break
+
+  page_title = 'KEXP'
+  return songs, page_title
+
+##############################################
+#urls = get_urls()
+#for url in urls:
+#  songs, page_title = parse_for_songs(url)
+#  print songs
