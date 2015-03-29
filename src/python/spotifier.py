@@ -131,15 +131,15 @@ def upsert_playlist(playlist_name):
   return playlist
 
 def add_tracks_to_playlist(track_uris, playlist_id, skip_tracks=set([])):
-  print 'Begin adding {} tracks to playlist...'.format(len(track_uris))
+  print 'Adding {} tracks to playlist...'.format(len(track_uris))
   unique_tracks = list(set(track_uris))
-  print '\t...unique tracks in original set: {}'.format(len(unique_tracks))
+  #print '\t...unique tracks in original set: {}'.format(len(unique_tracks))
   tracks_to_add = [track for track in unique_tracks if track not in skip_tracks]
-  print '\t...unique tracks NOT already in playlist: {}'.format(len(tracks_to_add))
+  #print '\t...unique tracks NOT already in playlist: {}'.format(len(tracks_to_add),)
   url = 'https://api.spotify.com/v1/users/{}/playlists/{}/tracks'.format(USER_ID,playlist_id)
   data = {'uris': tracks_to_add}
   r = requests.post(url, data=json.dumps(data), headers=REQUEST_HEADERS)
-  print 'Tracks added.'
+  #print 'Tracks added.'
 
 def get_userid():
   global USER_ID
@@ -277,7 +277,7 @@ def login_user_to_spotify():
 
 
 def fetch_top_tracks(artist, is_id=False):
-  print 'fetching top tracks for [{}]'.format(artist)
+  #print 'fetching top tracks for [{}]'.format(artist)
   matches = fetch_artist(artist, is_id)
   if len(matches) == 0:
     print 'No matches for [{}]'.format(artist)
@@ -289,7 +289,7 @@ def fetch_top_tracks(artist, is_id=False):
     return []
   id = matches[0]['id']
   url = 'https://api.spotify.com/v1/artists/{}/top-tracks?country=US'.format(id)
-  print url
+  #print url
   try:
     r = requests.get(url)
     r_json = r.json()
@@ -302,7 +302,6 @@ def fetch_top_tracks(artist, is_id=False):
 
 
 def fetch_related(artist, is_id=False):
-  print 'fetching related artists for [{}]'.format(artist)
   matches = fetch_artist(artist, is_id)
   if len(matches) == 0:
     print 'No matches for [{}]'.format(artist)
@@ -326,7 +325,7 @@ def fetch_related(artist, is_id=False):
 def fetch_artist(artist, is_id=False):
   if len(artist) == 22:
     is_id = True
-    print 'Artist [{}] is 22 chars; must be an ID, not name?!'.format(artist)
+    #print 'Artist [{}] is 22 chars; must be an ID, not name?!'.format(artist)
   try:
     if not is_id:
       url = 'https://api.spotify.com/v1/search?q={}&type=artist'.format(artist)
