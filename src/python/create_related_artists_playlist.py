@@ -16,7 +16,10 @@ import spotifier
 
 band=sys.argv[1]
 bands = spotifier.fetch_related(band)
-print spotifier.prettify(bands)
+for band in bands:
+  top_tracks = spotifier.fetch_top_tracks(band['id'])
+  for track in top_tracks:
+    print band['name'],'--',track['name']
 
 #print bands
 #spotifier.login_user_to_spotify()

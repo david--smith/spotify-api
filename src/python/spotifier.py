@@ -259,10 +259,32 @@ def login_user_to_spotify():
 
 
 def fetch_top_tracks(artist, is_id=False):
-  pass
+  print 'fetching top tracks for [{}]'.format(artist)
+  matches = fetch_artist(artist, is_id)
+  if len(matches) == 0:
+    print 'No matches for [{}]'.format(artist)
+    return []
+  if len(matches) > 1:
+    print 'Ambiguous artist; please refine search (name or ID) to resolve to single artist.'
+    for item in matches:
+      print item['name'],item['id']
+    return []
+  id = matches[0]['id']
+  url = 'https://api.spotify.com/v1/artists/{}/top-tracks?country=US'.format(id)
+  print url
+  try:
+    r = requests.get(url)
+    r_json = r.json()
+    print prettify(r_json)
+    songs = [{'name':song['name'],'id':song['id']} for song in r_json['tracks'] ]
+  except:
+    print 'PROBLEM! (fetch_top_tracks)', r
+    return []
+  return songs
 
 
 def fetch_related(artist, is_id=False):
+  print 'fetching related artists for [{}]'.format(artist)
   matches = fetch_artist(artist, is_id)
   if len(matches) == 0:
     print 'No matches for [{}]'.format(artist)
@@ -277,7 +299,7 @@ def fetch_related(artist, is_id=False):
   try:
     r = requests.get(url)
     r_json = r.json()
-    artist_matches = [(artist_info['name'],artist_info['id'] ) for artist_info in r_json['artists'] ]
+    artist_matches = [{'name':artist_info['name'],'id':artist_info['id']} for artist_info in r_json['artists'] ]
   except:
     print 'PROBLEM! (fetch_related)', r
     return []
