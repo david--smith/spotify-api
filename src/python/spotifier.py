@@ -287,7 +287,7 @@ def fetch_top_tracks(artist, is_id=False):
     for item in matches:
       print item['name'],item['id']
     return []
-  print matches
+  #print matches
   id = matches[0]['id']
   url = 'https://api.spotify.com/v1/artists/{}/top-tracks?country=US'.format(id)
   #print url
@@ -305,7 +305,7 @@ def fetch_top_tracks(artist, is_id=False):
 def fetch_related(artist, is_id=False):
   matches = fetch_artist(artist, is_id)
   if len(matches) == 0:
-    print 'No matches for [{}]'.format(artist)
+    print 'No matches for [{}]'.format(artist.encode('ascii', errors='replace'))
     return []
   if len(matches) > 1:
     print 'Ambiguous artist; please refine search (name or ID) to resolve to single artist.'
