@@ -264,13 +264,16 @@ def fetch_top_tracks(artist, is_id=False):
 
 def fetch_related(artist, is_id=False):
   matches = fetch_artist(artist, is_id)
-  if len(matches) is not 1:
+  if len(matches) == 0:
+    print 'No matches for [{}]'.format(artist)
+    return []
+  if len(matches) > 1:
+    print 'Ambiguous artist; please refine search (name or ID) to resolve to single artist.'
     for item in matches:
       print item['name'],item['id']
     return []
   id = matches[0]['id']
   url = 'https://api.spotify.com/v1/artists/{}/related-artists'.format(id)
-  print url
   try:
     r = requests.get(url)
     r_json = r.json()
@@ -281,6 +284,9 @@ def fetch_related(artist, is_id=False):
   return artist_matches
 
 def fetch_artist(artist, is_id=False):
+  if len(artist) == 22:
+    is_id = True
+    print 'Artist [{}] is 22 chars; must be an ID, not name?!'.format(artist)
   try:
     if not is_id:
       url = 'https://api.spotify.com/v1/search?q={}&type=artist'.format(artist)
@@ -291,7 +297,7 @@ def fetch_artist(artist, is_id=False):
 
   r = requests.get(url)
   r_json = r.json()
-  print prettify(r_json)
+#  print prettify(r_json)
   try:
     if not is_id:
       artist_matches = [artist_info for artist_info in r_json['artists']['items'] if artist_info['name'].lower() == artist.lower()]
