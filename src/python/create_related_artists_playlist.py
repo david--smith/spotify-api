@@ -15,7 +15,7 @@ from bs4 import BeautifulSoup
 import spotifier
 
 band=sys.argv[1]
-bands = spotifier.fetch_related(band)
+bands = spotifier.fetch_related(band, True)
 print spotifier.prettify(bands)
 
 #print bands

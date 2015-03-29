@@ -263,7 +263,7 @@ def fetch_top_tracks(artist, is_id=False):
 
 
 def fetch_related(artist, is_id=False):
-  matches = fetch_artist(artist)
+  matches = fetch_artist(artist, is_id)
   if len(matches) is not 1:
     for item in matches:
       print item['name'],item['id']
@@ -276,13 +276,16 @@ def fetch_related(artist, is_id=False):
     r_json = r.json()
     artist_matches = [(artist_info['name'],artist_info['id'] ) for artist_info in r_json['artists'] ]
   except:
-    print 'PROBLEM!',r
+    print 'PROBLEM! (fetch_related)', r
     return []
   return artist_matches
 
 def fetch_artist(artist, is_id=False):
   try:
-    url = 'https://api.spotify.com/v1/search?q={}&type=artist'.format(artist)
+    if not is_id:
+      url = 'https://api.spotify.com/v1/search?q={}&type=artist'.format(artist)
+    else:
+      url = 'https://api.spotify.com/v1/artists/{}'.format(artist)
   except:
     return []
 
@@ -290,9 +293,12 @@ def fetch_artist(artist, is_id=False):
   r_json = r.json()
   print prettify(r_json)
   try:
-    artist_matches = [artist_info for artist_info in r_json['artists']['items'] if artist_info['name'].lower() == artist.lower()]
+    if not is_id:
+      artist_matches = [artist_info for artist_info in r_json['artists']['items'] if artist_info['name'].lower() == artist.lower()]
+    else:
+      artist_matches = [r_json]
   except:
-    print 'PROBLEM!'
+    print 'PROBLEM! fetch_artist()', r
     return []
   return artist_matches
 
