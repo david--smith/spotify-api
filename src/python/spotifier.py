@@ -114,6 +114,22 @@ def get_songs(songs):
         results['albums'].append(album_info)
   return results
 
+def create_playlist(playlist_name):
+  url = 'https://api.spotify.com/v1/users/{}/playlists'.format(USER_ID)
+  data = {
+    "name": playlist_name,
+    "public": False
+  }
+  r = requests.post(url, data=json.dumps(data), headers=REQUEST_HEADERS)
+  print 'playlist created.'
+  return r.json()
+
+def upsert_playlist(playlist_name):
+  playlist = get_playlist(playlist_name)
+  if playlist is None:
+    playlist = create_playlist(playlist_name)
+  return playlist
+
 def add_tracks_to_playlist(track_uris, playlist_id, skip_tracks=set([])):
   print 'Begin adding {} tracks to playlist...'.format(len(track_uris))
   unique_tracks = list(set(track_uris))
@@ -258,6 +274,8 @@ def login_user_to_spotify():
   get_userid()
 
 
+
+
 def fetch_top_tracks(artist, is_id=False):
   print 'fetching top tracks for [{}]'.format(artist)
   matches = fetch_artist(artist, is_id)
@@ -275,8 +293,8 @@ def fetch_top_tracks(artist, is_id=False):
   try:
     r = requests.get(url)
     r_json = r.json()
-    print prettify(r_json)
-    songs = [{'name':song['name'],'id':song['id']} for song in r_json['tracks'] ]
+#    print prettify(r_json)
+    songs = [{'name':song['name'],'id':song['id'], 'uri':song['uri']} for song in r_json['tracks'] ]
   except:
     print 'PROBLEM! (fetch_top_tracks)', r
     return []

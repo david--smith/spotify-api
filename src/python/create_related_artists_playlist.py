@@ -16,10 +16,14 @@ import spotifier
 
 band=sys.argv[1]
 bands = spotifier.fetch_related(band)
-for band in bands:
-  top_tracks = spotifier.fetch_top_tracks(band['id'])
-  for track in top_tracks:
-    print band['name'],'--',track['name']
+if len(bands) > 0:
+  spotifier.login_user_to_spotify()
+  playlist = spotifier.create_playlist('RELATED TO {}'.format(sys.argv[1]))
+  #print spotifier.prettify(playlist)
 
-#print bands
-#spotifier.login_user_to_spotify()
+  for band in bands:
+    top_tracks = spotifier.fetch_top_tracks(band['id'])
+    track_uris = [track['uri'] for track in top_tracks]
+    for track in top_tracks:
+      print band['name'],'--',track['name']
+      spotifier.add_tracks_to_playlist(track_uris, playlist['id'])
