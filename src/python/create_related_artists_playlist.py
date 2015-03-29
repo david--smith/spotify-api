@@ -14,16 +14,35 @@ from bs4 import BeautifulSoup
 
 import spotifier
 
-band=sys.argv[1]
-bands = spotifier.fetch_related(band)
-if len(bands) > 0:
-  spotifier.login_user_to_spotify()
-  playlist = spotifier.create_playlist('RELATED TO {}'.format(band))
-  #print spotifier.prettify(playlist)
-
+def add_related_tracks_to_playlist(bands, playlist, max_artists, max_songs_per_artist, existing_playlist_songs=[]):
   for band in bands:
-    print 'Related band: {}'.format(band['name'].encode('ascii', errors='replace'))
-    top_tracks = spotifier.fetch_top_tracks(band['id'])
-    track_uris = [track['uri'] for track in top_tracks]
-    spotifier.add_tracks_to_playlist(track_uris, playlist['id'])
+    related_bands = spotifier.fetch_related(band['name'])
+    if len(related_bands) > 0:
+      for related_band in related_bands[0:max_artists]:
+        print 'Related to {}: {}'.format(band['name'].encode('ascii', errors='replace'), related_band['name'].encode('ascii', errors='replace'))
+        top_tracks = spotifier.fetch_top_tracks(related_band['id'])
+        track_uris = [track['uri'] for track in top_tracks]
+        track_uris = track_uris[0:max_songs_per_artist]
+        #print "would be adding {} songs".format(len(track_uris))
+        spotifier.add_tracks_to_playlist(track_uris, playlist['id'], existing_playlist_songs)
+        existing_playlist_songs |= set(track_uris)
 
+
+band=sys.argv[1]
+related_bands = spotifier.fetch_related(band)
+if len(related_bands) == 0:
+  exit()
+
+# add top tracks for the searched-for band
+top_tracks = spotifier.fetch_top_tracks(band, False)
+track_uris = [track['uri'] for track in top_tracks]
+track_uris = track_uris
+spotifier.login_user_to_spotify()
+playlist = spotifier.create_playlist('{} RADIO'.format(band))
+playlist_songs = set([])
+spotifier.add_tracks_to_playlist(track_uris, playlist['id'], playlist_songs)
+playlist_songs |= set(track_uris)
+
+band = spotifier.fetch_artist(band)
+add_related_tracks_to_playlist(band, playlist, 20, 5, playlist_songs)
+add_related_tracks_to_playlist(related_bands, playlist, 4, 3, playlist_songs)

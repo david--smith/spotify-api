@@ -277,7 +277,7 @@ def login_user_to_spotify():
 
 
 def fetch_top_tracks(artist, is_id=False):
-  #print 'fetching top tracks for [{}]'.format(artist)
+#  print 'fetching top tracks for [{}]'.format(artist)
   matches = fetch_artist(artist, is_id)
   if len(matches) == 0:
     print 'No matches for [{}]'.format(artist)
@@ -287,6 +287,7 @@ def fetch_top_tracks(artist, is_id=False):
     for item in matches:
       print item['name'],item['id']
     return []
+  print matches
   id = matches[0]['id']
   url = 'https://api.spotify.com/v1/artists/{}/top-tracks?country=US'.format(id)
   #print url
