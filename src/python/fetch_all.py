@@ -19,8 +19,8 @@ import provider_ohmyrockness
 import provider_sxsw
 
 GENERAL = [
-#  provider_ohmyrockness,
-  provider_sxsw,
+  provider_ohmyrockness,
+#  provider_sxsw,
 ]
 
 RADIO = [
@@ -46,9 +46,9 @@ REVIEWS = [
 
 PROVIDERS = set (
   GENERAL +
-#  RADIO +
-#  SHOWS +
-#  REVIEWS +
+  RADIO +
+  SHOWS +
+  REVIEWS +
   []
   )
 spotifier.login_user_to_spotify()

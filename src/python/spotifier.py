@@ -23,6 +23,15 @@ REQUEST_HEADERS = None
 AUTH_CODE = None
 
 
+def prettify(json_obj):
+  if json_obj == None:
+    return {}
+  x = json.dumps(json_obj, indent=2, sort_keys=True)
+  if x == None:
+    x = json.loads(str(json_obj))
+    prettify(x)
+  return x
+
 def follows(ids, type='artist'):
   url = "https://api.spotify.com/v1/me/following/contains"
   if isinstance(ids, str):
@@ -249,7 +258,29 @@ def login_user_to_spotify():
   get_userid()
 
 
-def fetch_artist(artist):
+def fetch_top_tracks(artist, is_id=False):
+  pass
+
+
+def fetch_related(artist, is_id=False):
+  matches = fetch_artist(artist)
+  if len(matches) is not 1:
+    for item in matches:
+      print item['name'],item['id']
+    return []
+  id = matches[0]['id']
+  url = 'https://api.spotify.com/v1/artists/{}/related-artists'.format(id)
+  print url
+  try:
+    r = requests.get(url)
+    r_json = r.json()
+    artist_matches = [(artist_info['name'],artist_info['id'] ) for artist_info in r_json['artists'] ]
+  except:
+    print 'PROBLEM!',r
+    return []
+  return artist_matches
+
+def fetch_artist(artist, is_id=False):
   try:
     url = 'https://api.spotify.com/v1/search?q={}&type=artist'.format(artist)
   except:
@@ -257,9 +288,11 @@ def fetch_artist(artist):
 
   r = requests.get(url)
   r_json = r.json()
+  print prettify(r_json)
   try:
     artist_matches = [artist_info for artist_info in r_json['artists']['items'] if artist_info['name'].lower() == artist.lower()]
   except:
+    print 'PROBLEM!'
     return []
   return artist_matches
 
