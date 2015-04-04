@@ -45,10 +45,10 @@ REVIEWS = [
 ]
 
 PROVIDERS = set (
-  GENERAL +
-  RADIO +
+#  GENERAL +
+#  RADIO +
   SHOWS +
-  REVIEWS +
+#  REVIEWS +
   []
   )
 spotifier.login_user_to_spotify()
@@ -75,7 +75,7 @@ for provider in PROVIDERS:
     songs_without_uris = [song for song in songs if 'uri' not in song]
     for song in songs_without_uris:
       artists = spotifier.fetch_artist(song['artist'])
-      artists = [artist for artist in artists if artist['name'].lower() == song['artist'].lower()]
+      artists = [artist for artist in artists if 'name' in artist and artist['name'].lower() == song['artist'].lower()]
       if len (artists) == 0:
         continue
       follows = spotifier.follows([artists[0]['id']])

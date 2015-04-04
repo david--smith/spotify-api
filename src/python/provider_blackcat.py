@@ -53,7 +53,7 @@ def parse_for_songs(url):
     albums = spotifier.get_albums_for_artist(band_name)
     if len(albums) == 0:
       continue
-    print 'Found {} albums'.format(len(albums))
+#    print 'Found {} albums'.format(len(albums))
     for album in albums:
       tracks = spotifier.get_album_tracks(album['id'])
       if len(tracks) < 1:

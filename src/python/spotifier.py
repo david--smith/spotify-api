@@ -55,6 +55,8 @@ def get_albums_for_artist(artist):
     return []
   albums = []
   for artist in artists:
+    if 'id' not in artist:
+      continue
     artist_id = artist['id']
     url = "https://api.spotify.com/v1/artists/{}/albums".format(artist_id)
     r = requests.get(url, headers=REQUEST_HEADERS)
@@ -100,10 +102,6 @@ def get_songs(songs):
       """
       track_info = tracks[0]
       name = track_info['name']
-      print '\t...found {} by {}'.format(
-        name.encode('ascii', errors='replace'),
-        artist.encode('ascii', errors='replace')
-      )
       results['matches'].append({
         'name': name,
         'uri': track_info['uri']
@@ -304,7 +302,7 @@ def fetch_top_tracks(artist, is_id=False):
 
 def fetch_related(artist, is_id=False):
   matches = fetch_artist(artist, is_id)
-  if len(matches) == 0:
+  if len(matches) == 0 or 'id' not in matches[0]:
     print 'No matches for [{}]'.format(artist.encode('ascii', errors='replace'))
     return []
   if len(matches) > 1:
@@ -336,9 +334,9 @@ def fetch_artist(artist, is_id=False):
     return []
 
   r = requests.get(url)
-  r_json = r.json()
 #  print prettify(r_json)
   try:
+    r_json = r.json()
     if not is_id:
       artist_matches = [artist_info for artist_info in r_json['artists']['items'] if artist_info['name'].lower() == artist.lower()]
     else:

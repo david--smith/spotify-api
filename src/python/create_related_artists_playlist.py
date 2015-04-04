@@ -17,9 +17,13 @@ import spotifier
 def add_related_tracks_to_playlist(bands, playlist, max_artists, max_songs_per_artist, existing_playlist_songs=[]):
   for band in bands:
     related_bands = spotifier.fetch_related(band['name'])
+
     if len(related_bands) > 0:
       for related_band in related_bands[0:max_artists]:
         print 'Related to {}: {}'.format(band['name'].encode('ascii', errors='replace'), related_band['name'].encode('ascii', errors='replace'))
+#        if spotifier.follows([related_band['id']])[0]:
+#          print 'Already following: {}'.format(related_band)
+#          continue
         top_tracks = spotifier.fetch_top_tracks(related_band['id'])
         track_uris = [track['uri'] for track in top_tracks]
         track_uris = track_uris[0:max_songs_per_artist]
@@ -46,3 +50,4 @@ playlist_songs |= set(track_uris)
 band = spotifier.fetch_artist(band)
 add_related_tracks_to_playlist(band, playlist, 20, 5, playlist_songs)
 add_related_tracks_to_playlist(related_bands, playlist, 4, 3, playlist_songs)
+
