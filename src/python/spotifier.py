@@ -128,16 +128,27 @@ def upsert_playlist(playlist_name):
     playlist = create_playlist(playlist_name)
   return playlist
 
+def chunks(l, n):
+  for i in xrange(0, len(l), n):
+    yield l[i:i+n]
+
 def add_tracks_to_playlist(track_uris, playlist_id, skip_tracks=set([])):
-  print 'Adding {} tracks to playlist...'.format(len(track_uris))
+  if len(track_uris) < 1:
+    return
+  MAX_TRACKS_PER_API_CALL = 95
   unique_tracks = list(set(track_uris))
+  print 'Potentially adding {} unique tracks to playlist...'.format(len(unique_tracks))
   #print '\t...unique tracks in original set: {}'.format(len(unique_tracks))
   tracks_to_add = [track for track in unique_tracks if track not in skip_tracks]
-  #print '\t...unique tracks NOT already in playlist: {}'.format(len(tracks_to_add),)
-  url = 'https://api.spotify.com/v1/users/{}/playlists/{}/tracks'.format(USER_ID,playlist_id)
-  data = {'uris': tracks_to_add}
-  r = requests.post(url, data=json.dumps(data), headers=REQUEST_HEADERS)
-  #print 'Tracks added.'
+  print '\t...unique tracks NOT already in playlist: {}'.format(len(tracks_to_add),)
+
+  track_chunks = chunks(tracks_to_add, MAX_TRACKS_PER_API_CALL)
+  for chunk in track_chunks:
+    url = 'https://api.spotify.com/v1/users/{}/playlists/{}/tracks'.format(USER_ID,playlist_id)
+    data = {'uris': chunk}
+    r = requests.post(url, data=json.dumps(data), headers=REQUEST_HEADERS)
+    #print dir(r), r.text, r.json
+    print '\t{} tracks added.'.format(len(chunk))
 
 def get_userid():
   global USER_ID
@@ -188,6 +199,7 @@ def get_playlist(name):
       if list['name'] == name:
         return list['id'], list
     url = playlists_json['next']
+#  print "Found playlist {} -- {}".format(playlist_id,playlist)
   return playlist_id, playlist
 
 def get_access_token(code):
@@ -295,7 +307,7 @@ def fetch_top_tracks(artist, is_id=False):
 #    print prettify(r_json)
     songs = [{'name':song['name'],'id':song['id'], 'uri':song['uri']} for song in r_json['tracks'] ]
   except:
-    print 'PROBLEM! (fetch_top_tracks)', r
+    print '\tPROBLEM! (fetch_top_tracks) for {}'.format(artist), r
     return []
   return songs
 
@@ -317,11 +329,13 @@ def fetch_related(artist, is_id=False):
     r_json = r.json()
     artist_matches = [{'name':artist_info['name'],'id':artist_info['id']} for artist_info in r_json['artists'] ]
   except:
-    print 'PROBLEM! (fetch_related)', r
+    print '\tPROBLEM! (fetch_related) for {}'.format(artist), r
     return []
   return artist_matches
 
 def fetch_artist(artist, is_id=False):
+  if not artist or len(artist.strip())==0:
+    return []
   if len(artist) == 22:
     is_id = True
     #print 'Artist [{}] is 22 chars; must be an ID, not name?!'.format(artist)
@@ -333,8 +347,8 @@ def fetch_artist(artist, is_id=False):
   except:
     return []
 
+#  print url
   r = requests.get(url)
-#  print prettify(r_json)
   try:
     r_json = r.json()
     if not is_id:
@@ -342,7 +356,7 @@ def fetch_artist(artist, is_id=False):
     else:
       artist_matches = [r_json]
   except:
-    print 'PROBLEM! fetch_artist()', r
+    print '\tPROBLEM! fetch_artist() for {}'.format(artist), r, r.text, r.raw
     return []
   return artist_matches
 

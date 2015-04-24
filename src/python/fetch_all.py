@@ -17,6 +17,11 @@ import provider_comet
 import provider_kexp
 import provider_ohmyrockness
 import provider_sxsw
+import provider_catscradle
+
+TEST = [
+  provider_catscradle,
+]
 
 GENERAL = [
   provider_ohmyrockness,
@@ -45,9 +50,10 @@ REVIEWS = [
 ]
 
 PROVIDERS = set (
+  TEST +
 #  GENERAL +
 #  RADIO +
-  SHOWS +
+#  SHOWS +
 #  REVIEWS +
   []
   )
@@ -60,6 +66,7 @@ for provider in PROVIDERS:
   if playlist_id == -1:
     print 'ERROR: COULD NOT FIND PLAYLIST "{}"'.format(playlist_name)
     continue
+#  print "Found playlist", playlist_name, playlist_id, playlist
 
   existing_playlist_track_uris = spotifier.get_playlist_tracks(playlist_id)
 
