@@ -36,12 +36,13 @@ RADIO = [
   provider_kexp,
 ]
 SHOWS = [
+  provider_rock_hotel,
+  provider_blackcat,
+  provider_dc9,
   provider_ustreet,
   provider_velvet,
   provider_comet,
-  provider_dc9,
-  provider_blackcat,
-  provider_rock_hotel,
+  provider_catscradle,
 ]
 REVIEWS = [
   provider_pitchfork,
@@ -50,10 +51,10 @@ REVIEWS = [
 ]
 
 PROVIDERS = set (
-  TEST +
+#  TEST +
 #  GENERAL +
+  SHOWS +
 #  RADIO +
-#  SHOWS +
 #  REVIEWS +
   []
   )

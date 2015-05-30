@@ -384,6 +384,8 @@ def fetch_album(album):
   if r.status_code == 400:
     return[]
   r_json = r.json()
+  if 'albums' not in r_json:
+    return []
   album_matches = [album_info for album_info in r_json['albums']['items'] if album_info['name'].lower() == album.lower()]
   for album in album_matches:
     url = album['href']
