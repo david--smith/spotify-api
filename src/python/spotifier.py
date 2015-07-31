@@ -297,6 +297,9 @@ def fetch_top_tracks(artist, is_id=False):
     for item in matches:
       print item['name'],item['id']
     return []
+  if not 'id' in matches[0]:
+    print 'No id in: %s' % str(matches[0])
+    return []
   #print matches
   id = matches[0]['id']
   url = 'https://api.spotify.com/v1/artists/{}/top-tracks?country=US'.format(id)
