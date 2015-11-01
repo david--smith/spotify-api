@@ -4,6 +4,7 @@ import os
 import sys
 import re
 import datetime
+import time
 import requests
 import spotipy
 import spotipy.util as util
@@ -14,8 +15,11 @@ from bs4 import BeautifulSoup
 
 import spotifier
 
+
 def add_related_tracks_to_playlist(bands, playlist, max_artists, max_songs_per_artist, existing_playlist_songs=[]):
   for band in bands:
+    # sleep periodically so as to NOT exced rate limit
+    time.sleep(1)
     related_bands = spotifier.fetch_related(band['name'])
 
     if len(related_bands) > 0:
