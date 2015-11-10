@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import spotifier
+import time
 import provider_soma
 import provider_wprb
 import provider_wxdu
@@ -38,11 +39,11 @@ RADIO = [
 SHOWS = [
   provider_rock_hotel,
   provider_blackcat,
-  provider_dc9,
-  provider_ustreet,
-  provider_velvet,
+#  provider_dc9,
+#  provider_ustreet,
+#  provider_velvet,
   provider_comet,
-  provider_catscradle,
+#  provider_catscradle,
 ]
 REVIEWS = [
   provider_pitchfork,
@@ -83,11 +84,13 @@ for provider in PROVIDERS:
     songs_without_uris = [song for song in songs if 'uri' not in song]
     for song in songs_without_uris:
       artists = spotifier.fetch_artist(song['artist'])
+      time.sleep(.5)
       artists = [artist for artist in artists if 'name' in artist and artist['name'].lower() == song['artist'].lower()]
       if len (artists) == 0:
         continue
       follows = spotifier.follows([artists[0]['id']])
       if follows[0]:
+        time.sleep(1)
         print ('\tALREADY FOLLOWING {}').format (song['artist'])
 #        songs_without_uris.remove(song)
     song_and_album_matches = spotifier.get_songs(songs_without_uris)

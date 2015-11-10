@@ -196,7 +196,9 @@ def get_playlist(name):
       index = index +1
       if index % 100 == 0:
         print '\t...looking for playlist {}: {} scanned so far'.format(name,index)
+        time.sleep(.5)
       if list['name'] == name:
+        print "FOUND PLAYLIST %s: %s" % (name, list['id'])
         return list['id'], list
     url = playlists_json['next']
 #  print "Found playlist {} -- {}".format(playlist_id,playlist)
@@ -337,6 +339,7 @@ def fetch_related(artist, is_id=False):
   return artist_matches
 
 def fetch_artist(artist, is_id=False):
+  time.sleep(.5)
   if not artist or len(artist.strip())==0:
     return []
   if len(artist) == 22:
