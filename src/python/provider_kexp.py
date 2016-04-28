@@ -36,6 +36,8 @@ def parse_for_songs(url):
       album = row_raw_text[2].encode('ascii', errors='replace').strip()
       albums = spotifier.fetch_album(album)
       for album in albums:
+        if not 'artist' in album:
+          continue
         album_artist = album['artist']
         if album_artist.lower() != artist.lower():
           continue

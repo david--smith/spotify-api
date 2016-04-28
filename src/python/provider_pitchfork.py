@@ -50,15 +50,20 @@ def parse_for_songs(url):
 #      print '\t', 'FOUND:', artist, '>', album
       albums = spotifier.fetch_album(album)
       for album in albums:
+        """
+        if not 'artist' in album:
+          print "%s does NOT have key 'artist'" % str(album)
+          continue
         album_artist = album['artist']
         if album_artist.lower() != artist.lower():
           continue
+        """
         album_id = album['id']
         tracks = spotifier.get_album_tracks(album_id)
         if len(tracks) < 1:
           continue
         songs.append({'uri': tracks[0]['uri']})
-        print "{}: {}".format(album_artist, album['name'])
+        print "{}: {}".format(artist, album['name'])
         break
   page_title = 'PITCHFORK'
   return songs, page_title

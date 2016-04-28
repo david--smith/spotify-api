@@ -30,11 +30,11 @@ GENERAL = [
 ]
 
 RADIO = [
+  provider_kexp,
   provider_wxdu,
   provider_wxyc,
   provider_wprb,
   provider_soma,
-  provider_kexp,
 ]
 SHOWS = [
   provider_rock_hotel,
@@ -55,8 +55,8 @@ PROVIDERS = set (
 #  TEST +
 #  GENERAL +
   SHOWS +
+  REVIEWS +
 #  RADIO +
-#  REVIEWS +
   []
   )
 spotifier.login_user_to_spotify()

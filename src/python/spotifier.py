@@ -394,6 +394,8 @@ def fetch_album(album):
     return []
   album_matches = [album_info for album_info in r_json['albums']['items'] if album_info['name'].lower() == album.lower()]
   for album in album_matches:
+    if 'artists' not in r_json:
+      continue
     url = album['href']
     r = requests.get(url)
     r_json = r.json()
