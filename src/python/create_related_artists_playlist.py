@@ -37,6 +37,7 @@ def add_related_tracks_to_playlist(bands, playlist, max_artists, max_songs_per_a
 
 
 band=sys.argv[1]
+
 related_bands = spotifier.fetch_related(band)
 if len(related_bands) == 0:
   exit()

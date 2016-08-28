@@ -30,9 +30,13 @@ class HTTPServerThread (threading.Thread):
     self.httpd = ServerClass(server_address, MyTCPHandler)
     sa = self.httpd.socket.getsockname()
     print "Serving HTTP on", sa[0], "port", sa[1], "..."
-    self.httpd.serve_forever()
+    # self.httpd.serve_forever()
+    self.httpd.handle_request()
+
   def shutdown(self):
-    self.httpd.shutdown()
+    print "HTTPServerThread received shutdown() call..."
+    # self.httpd.shutdown()
+    self.httpd.server_close()
 
 class MyTCPHandler(SocketServer.BaseRequestHandler):
   def handle(self):

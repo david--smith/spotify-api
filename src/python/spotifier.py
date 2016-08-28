@@ -49,6 +49,20 @@ def follows(ids, type='artist'):
   return r_json
 
 
+def following(type='artist'):
+  url = "https://api.spotify.com/v1/me/following"
+  print 'Getting followed artists...'
+  params = {
+    'type': type,
+  }
+  r = requests.get(url, params=params, headers=REQUEST_HEADERS)
+  if r.status_code != 200:
+    print 'Error ', r, r.text
+    return False
+  r_json = r.json()
+  return r_json['artists']['items']
+
+
 def get_albums_for_artist(artist):
   artists = fetch_artist(artist)
   if len(artists) == 0:
@@ -208,13 +222,8 @@ def get_access_token(code):
   global ACCESS_TOKEN, REQUEST_HEADERS
   if ACCESS_TOKEN != None:
     return ACCESS_TOKEN, REQUEST_HEADERS
-  CONFIG_FILE='config/settings.ini'
-  #print "Config: {} exists? {}".format(CONFIG_FILE, os.path.isfile(CONFIG_FILE))
-  Config = ConfigParser.ConfigParser()
-  Config.read(CONFIG_FILE)
-  client_secret=Config.get('auth','clientSecret')
-  client_id=Config.get('auth', 'clientID')
-  username=Config.get('auth','user')
+  client_secret, client_id, username = load_config()
+
   auth_raw = client_id + ':' + client_secret
   auth_encoded = base64.b64encode(auth_raw)
   #print "{} = {}".format(auth_raw, auth_encoded)
@@ -237,18 +246,29 @@ def get_access_token(code):
   print "Obtained bearer token."
   return ACCESS_TOKEN, REQUEST_HEADERS
 
-def login_user_to_spotify():
-  global AUTH_CODE
-  http_thread = http_server_for_callbacks.HTTPServerThread(1, "Thread-1", 1)
-  http_thread.start()
-  time.sleep(1)
+
+def load_config():
   CONFIG_FILE='config/settings.ini'
-  #print "Config: {} exists? {}".format(CONFIG_FILE, os.path.isfile(CONFIG_FILE))
+  config_exists = os.path.isfile(CONFIG_FILE)
+  print "Config: {} exists? {}".format(CONFIG_FILE, config_exists)
+  if not config_exists:
+    CONFIG_FILE='../../config/settings.ini'
+  config_exists = os.path.isfile(CONFIG_FILE)
+  print "Config: {} exists? {}".format(CONFIG_FILE, config_exists)
   Config = ConfigParser.ConfigParser()
   Config.read(CONFIG_FILE)
   client_secret=Config.get('auth','clientSecret')
   client_id=Config.get('auth', 'clientID')
   username=Config.get('auth','user')
+  return client_secret, client_id, username
+
+def login_user_to_spotify():
+  global AUTH_CODE
+  http_thread = http_server_for_callbacks.HTTPServerThread(1, "Thread-1", 1)
+  http_thread.start()
+  time.sleep(1)
+  client_secret, client_id, username = load_config()
+
 
   ####################
   # Authorization
@@ -283,6 +303,7 @@ def login_user_to_spotify():
   access_token, headers = get_access_token(AUTH_CODE)
   print ("Shutting down HTTP server...")
   http_thread.shutdown()
+  print ("Shutdown called...")
   get_userid()
 
 
