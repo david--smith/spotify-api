@@ -49,18 +49,26 @@ def follows(ids, type='artist'):
   return r_json
 
 
-def following(type='artist'):
+def following(type='artist', after=None, limit=150):
   url = "https://api.spotify.com/v1/me/following"
   print 'Getting followed artists...'
-  params = {
-    'type': type,
-  }
-  r = requests.get(url, params=params, headers=REQUEST_HEADERS)
-  if r.status_code != 200:
-    print 'Error ', r, r.text
-    return False
-  r_json = r.json()
-  return r_json['artists']['items']
+  artists=[]
+  while (len(artists)<limit and after != 'EXHAUSTED'):
+    params = {
+      'type': type,
+    }
+    if after:
+      params['after']=after
+    r = requests.get(url, params=params, headers=REQUEST_HEADERS)
+    if r.status_code == 429:
+      time.sleep(2)
+      r = requests.get(url, params=params, headers=REQUEST_HEADERS)
+    r_json = r.json()
+    after = r_json['artists']['cursors']['after']
+    if after == None:
+      after='EXHAUSTED'
+    artists = artists + [{'name': i['name'], 'id': i['id']} for i in r_json['artists']['items']]
+  return artists, after
 
 
 def get_albums_for_artist(artist):
@@ -238,7 +246,7 @@ def get_access_token(code):
   print "Getting bearer token..."
   #print "POST {} with:\n{}\nheaders: {}".format(url, body_data, headers)
   r = requests.post(url,data=body, headers=headers)
-  #print r.status_code, r.content
+  print r.status_code, r.content
   token = r.json()['access_token']
   ACCESS_TOKEN = token
   #print ACCESS_TOKEN
