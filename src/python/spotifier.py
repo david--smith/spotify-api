@@ -61,14 +61,52 @@ def following(type='artist', after=None, limit=150):
       params['after']=after
     r = requests.get(url, params=params, headers=REQUEST_HEADERS)
     if r.status_code == 429:
+      print '   artists fetched: ', len(artists)
       time.sleep(2)
       r = requests.get(url, params=params, headers=REQUEST_HEADERS)
     r_json = r.json()
     after = r_json['artists']['cursors']['after']
     if after == None:
       after='EXHAUSTED'
-    artists = artists + [{'name': i['name'], 'id': i['id']} for i in r_json['artists']['items']]
+    for artist in r_json['artists']['items']:
+      artist = {'name': artist['name'], 'id': artist['id']}
+      print artist
+      artists.append(artist)
+    # artists = artists + [{'name': i['name'], 'id': i['id']} for i in r_json['artists']['items']]
   return artists, after
+
+
+def issue_http_get(url, params={}):
+  r = requests.get(url, params=params, headers=REQUEST_HEADERS)
+  if r.status_code == 429:
+    time.sleep(2)
+    r = requests.get(url, params=params, headers=REQUEST_HEADERS)
+  return r.json()
+
+
+
+def get_following_recent_albums(limit=5000):
+  artists = following(limit=limit)[0]
+  for artist in artists:
+    print 'artist=', artist
+    artist_id = artist['id']
+    artist_name = artist['name']
+    print artist_name
+    album_ids = [i['id'] for i in get_albums_for_artist(artist_id)]
+    # get these albums
+    url='https://api.spotify.com/v1/albums'
+    params = {
+      'ids': album_ids,
+    }
+    #r = requests.get(url, params=params, headers=REQUEST_HEADERS)
+    r_json = issue_http_get(url, params)
+    albums = r_json.get('albums', [])
+    if not albums:
+      print "**** artist", artist_name, "has no albums?!", r_json
+    for album in albums:
+      print "   ", album['release_date'], album['name']
+
+
 
 
 def get_albums_for_artist(artist):
