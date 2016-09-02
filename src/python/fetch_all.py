@@ -37,33 +37,33 @@ RADIO = [
   provider_soma,
 ]
 SHOWS = [
-  provider_rock_hotel,
-  provider_blackcat,
-#  provider_dc9,
-#  provider_ustreet,
-#  provider_velvet,
-  provider_comet,
-#  provider_catscradle,
+#   provider_rock_hotel,
+#   provider_blackcat,
+provider_dc9,
+provider_ustreet,
+# #  provider_velvet,
+#   provider_comet,
+# #  provider_catscradle,
 ]
 REVIEWS = [
   provider_pitchfork,
-  provider_doa,
-  provider_skinny,
+  # provider_doa,
+  # provider_skinny,
 ]
 
 PROVIDERS = set (
 #  TEST +
 #  GENERAL +
-  SHOWS +
+  # SHOWS +
   REVIEWS +
-#  RADIO +
+  RADIO +
   []
   )
 spotifier.login_user_to_spotify()
 
 for provider in PROVIDERS:
   playlist_name = provider.get_playlist_name()
-  playlist_id, playlist = spotifier.get_playlist(playlist_name)
+  playlist_id = spotifier.get_playlist(playlist_name)
 
   if playlist_id == -1:
     print 'ERROR: COULD NOT FIND PLAYLIST "{}"'.format(playlist_name)

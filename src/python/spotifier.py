@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
+
 import ConfigParser
 import datetime
 import os
@@ -21,7 +25,8 @@ ACCESS_TOKEN = None
 USER_ID = None
 REQUEST_HEADERS = None
 AUTH_CODE = None
-
+PLAYLISTS_BY_NAME = {}
+PLAYLISTS_CACHE_FILE = './config/playlists_by_name.txt'
 
 def prettify(json_obj):
   if json_obj == None:
@@ -93,10 +98,11 @@ def get_following_recent_albums(limit=5000):
     artist_name = artist['name']
     print artist_name
     album_ids = [i['id'] for i in get_albums_for_artist(artist_id)]
+    print "        > get_following_recent_albums():", album_ids
     # get these albums
     url='https://api.spotify.com/v1/albums'
     params = {
-      'ids': album_ids,
+      'ids': ','.join(album_ids),
     }
     #r = requests.get(url, params=params, headers=REQUEST_HEADERS)
     r_json = issue_http_get(url, params)
@@ -104,7 +110,7 @@ def get_following_recent_albums(limit=5000):
     if not albums:
       print "**** artist", artist_name, "has no albums?!", r_json
     for album in albums:
-      print "   ", album['release_date'], album['name']
+      print "   ", album['release_date'], ' ->', album['name']
 
 
 
@@ -119,12 +125,13 @@ def get_albums_for_artist(artist):
       continue
     artist_id = artist['id']
     url = "https://api.spotify.com/v1/artists/{}/albums".format(artist_id)
-    r = requests.get(url, headers=REQUEST_HEADERS)
+    params = {'album_type': 'album'}
+    r = requests.get(url, params=params, headers=REQUEST_HEADERS)
     if r.status_code != 200:
       return []
     r_json = r.json()
     for album in r_json['items']:
-  #    print '\t' + album['name'] + '/' + album['id']
+      #print '    get_albums_for_artist(): ' + album['name'] + '/' + album['id']
       albums.append(album)
   return albums
 
@@ -200,7 +207,7 @@ def add_tracks_to_playlist(track_uris, playlist_id, skip_tracks=set([])):
   print 'Potentially adding {} unique tracks to playlist...'.format(len(unique_tracks))
   #print '\t...unique tracks in original set: {}'.format(len(unique_tracks))
   tracks_to_add = [track for track in unique_tracks if track not in skip_tracks]
-  print '\t...unique tracks NOT already in playlist: {}'.format(len(tracks_to_add),)
+  print '\t...unique tracks NOT already in playlist {}: {}'.format(playlist_id, len(tracks_to_add),)
 
   track_chunks = chunks(tracks_to_add, MAX_TRACKS_PER_API_CALL)
   for chunk in track_chunks:
@@ -226,7 +233,10 @@ def get_playlist_tracks(playlist_id):
   url = 'https://api.spotify.com/v1/users/{}/playlists/{}/tracks'.format(USER_ID, playlist_id)
   while True:
     r = requests.get(url, headers = REQUEST_HEADERS)
-    r_json = r.json()
+    try:
+      r_json = r.json()
+    except Exception as e:
+      break
     if not 'items' in r_json:
       break
     uris = [ song['track']['uri'] for song in r_json['items'] ]
@@ -237,9 +247,30 @@ def get_playlist_tracks(playlist_id):
       break
   return track_uris
 
+def load_playlists_cache():
+  if PLAYLISTS_BY_NAME.keys():
+    return
+  if not os.path.isfile(PLAYLISTS_CACHE_FILE):
+    file = open(PLAYLISTS_CACHE_FILE, 'w')
+    file.close()
+  with open(PLAYLISTS_CACHE_FILE) as f:
+    data = f.read()
+    lines = data.split("\n")
+    for line in lines:
+      try:
+        name, id = line.split("\t")
+      except Exception as e:
+        continue
+      PLAYLISTS_BY_NAME[name]=id
 
 def get_playlist(name):
   print 'Looking for playlist {}'.format(name)
+  load_playlists_cache()
+  playlist_id = PLAYLISTS_BY_NAME.get(name, None)
+  if playlist_id:
+    return playlist_id
+
+  cache_file = open(PLAYLISTS_CACHE_FILE,'a')
   index = 0
   playlist = {}
   playlist_id = -1
@@ -257,11 +288,17 @@ def get_playlist(name):
       if index % 100 == 0:
         print '\t...looking for playlist {}: {} scanned so far'.format(name,index)
         time.sleep(.5)
-      if list['name'] == name:
+      playlist_name = list['name']
+      if not PLAYLISTS_BY_NAME.get(playlist_name, None):
+        PLAYLISTS_BY_NAME[playlist_name]=list['id']
+        cache_file.write("%s\t%s\n" % (playlist_name.encode('utf-8'), list['id']))
+      if playlist_name == name:
         print "FOUND PLAYLIST %s: %s" % (name, list['id'])
+        cache_file.close()
         return list['id'], list
     url = playlists_json['next']
 #  print "Found playlist {} -- {}".format(playlist_id,playlist)
+  cache_file.close()
   return playlist_id, playlist
 
 def get_access_token(code):
@@ -467,7 +504,7 @@ def fetch_album(album):
     r = requests.get(url)
     r_json = r.json()
     album['artist'] = r_json['artists'][0]['name']
-  return album_matches
+  return [album for album in album_matches if album.get('artist', None)]
 
 
 def output_songs(url, title, songs, out_filename=None):
