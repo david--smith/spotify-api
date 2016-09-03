@@ -67,6 +67,7 @@ def following(type='artist', after=None, limit=150):
     r = requests.get(url, params=params, headers=REQUEST_HEADERS)
     if r.status_code == 429:
       print '   artists fetched: ', len(artists)
+      print 'sleeping'
       time.sleep(2)
       r = requests.get(url, params=params, headers=REQUEST_HEADERS)
     r_json = r.json()
@@ -81,24 +82,29 @@ def following(type='artist', after=None, limit=150):
   return artists, after
 
 
-def issue_http_get(url, params={}):
-  r = requests.get(url, params=params, headers=REQUEST_HEADERS)
-  if r.status_code == 429:
-    time.sleep(2)
+def issue_http_get(url, params={}, as_json=True):
+  try:
     r = requests.get(url, params=params, headers=REQUEST_HEADERS)
-  return r.json()
-
+    if r.status_code == 429:
+      print 'sleeping'
+      time.sleep(1)
+      r = requests.get(url, params=params, headers=REQUEST_HEADERS)
+    return (as_json and r.json()) or r
+  except requests.exceptions.ConnectionError as e:
+    print "connection reset by peer; trying again..."
+    issue_http_get(url, params, as_json=as_json)
 
 
 def get_following_recent_albums(limit=5000):
   artists = following(limit=limit)[0]
+  matched_albums = []
   for artist in artists:
     print 'artist=', artist
     artist_id = artist['id']
     artist_name = artist['name']
     print artist_name
     album_ids = [i['id'] for i in get_albums_for_artist(artist_id)]
-    print "        > get_following_recent_albums():", album_ids
+    # print "        > get_following_recent_albums():", album_ids
     # get these albums
     url='https://api.spotify.com/v1/albums'
     params = {
@@ -109,9 +115,12 @@ def get_following_recent_albums(limit=5000):
     albums = r_json.get('albums', [])
     if not albums:
       print "**** artist", artist_name, "has no albums?!", r_json
-    for album in albums:
+      continue
+    matching_albums = [album for album in albums if album['release_date'].startswith('2016')]
+    for album in matching_albums:
       print "   ", album['release_date'], ' ->', album['name']
-
+      matched_albums.append(album)
+  return matched_albums
 
 
 
@@ -126,7 +135,8 @@ def get_albums_for_artist(artist):
     artist_id = artist['id']
     url = "https://api.spotify.com/v1/artists/{}/albums".format(artist_id)
     params = {'album_type': 'album'}
-    r = requests.get(url, params=params, headers=REQUEST_HEADERS)
+    r = issue_http_get(url, params=params, as_json=False)
+    # r = requests.get(url, params=params, headers=REQUEST_HEADERS)
     if r.status_code != 200:
       return []
     r_json = r.json()
@@ -287,6 +297,7 @@ def get_playlist(name):
       index = index +1
       if index % 100 == 0:
         print '\t...looking for playlist {}: {} scanned so far'.format(name,index)
+        print 'sleeping'
         time.sleep(.5)
       playlist_name = list['name']
       if not PLAYLISTS_BY_NAME.get(playlist_name, None):
@@ -349,6 +360,7 @@ def login_user_to_spotify():
   global AUTH_CODE
   http_thread = http_server_for_callbacks.HTTPServerThread(1, "Thread-1", 1)
   http_thread.start()
+  print 'sleeping'
   time.sleep(1)
   client_secret, client_id, username = load_config()
 
@@ -380,6 +392,7 @@ def login_user_to_spotify():
   webbrowser.open(full_url)
   #print '----------'
   while http_thread.AUTH_CODE == None:
+    print 'sleeping'
     time.sleep(.25)
   print "Obtained auth code..."
   AUTH_CODE = http_thread.AUTH_CODE
@@ -443,7 +456,8 @@ def fetch_related(artist, is_id=False):
   return artist_matches
 
 def fetch_artist(artist, is_id=False):
-  time.sleep(.5)
+  # print 'sleeping fetch_artist()'
+  # time.sleep(.5)
   if not artist or len(artist.strip())==0:
     return []
   if len(artist) == 22:
