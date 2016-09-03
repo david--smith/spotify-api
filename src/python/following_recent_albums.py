@@ -27,7 +27,7 @@ if playlist_id == -1:
 else:
   existing_playlist_track_uris = spotifier.get_playlist_tracks(playlist_id)
 
-  albums = spotifier.get_following_recent_albums(limit=51)
+  albums = spotifier.get_following_recent_albums(limit=9999)
 
   for album in albums:
     print "%s by %s" % (album['name'], album['artists'][0]['name'])
