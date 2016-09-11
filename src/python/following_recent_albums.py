@@ -19,7 +19,8 @@ import spotifier
 ##############################
 spotifier.login_user_to_spotify()
 
-playlist_name = '2016-new'
+year=2016
+playlist_name = "%d-new" % year
 playlist_id = spotifier.get_playlist(playlist_name)
 
 if playlist_id == -1:
@@ -27,11 +28,16 @@ if playlist_id == -1:
 else:
   existing_playlist_track_uris = spotifier.get_playlist_tracks(playlist_id)
 
-  albums = spotifier.get_following_recent_albums(limit=9999)
+  albums = spotifier.get_following_recent_albums(year=year, limit=9999)
 
+  albums_deduped = {}
   for album in albums:
-    print "%s by %s" % (album['name'], album['artists'][0]['name'])
-    song_uris = [track['uri'] for track in album['tracks']['items']]
+    dedupe_key = "%s by %s" % (album['name'], album['artists'][0]['name'])
+    if albums_deduped.get(dedupe_key, -1) != -1:
+      continue
+    albums_deduped[dedupe_key]=1
+    print dedupe_key
+    song_uris = [track['uri'] for track in album['tracks']['items']][:3]
     spotifier.add_tracks_to_playlist(song_uris, playlist_id, existing_playlist_track_uris)
     existing_playlist_track_uris |= set(song_uris)
 

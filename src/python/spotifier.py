@@ -71,7 +71,11 @@ def following(type='artist', after=None, limit=150):
       time.sleep(2)
       r = requests.get(url, params=params, headers=REQUEST_HEADERS)
     r_json = r.json()
-    after = r_json['artists']['cursors']['after']
+    after = r_json.get('artists', None)
+    if after == None:
+      after='EXHAUSTED'
+      continue
+    after = after['cursors']['after']
     if after == None:
       after='EXHAUSTED'
     for artist in r_json['artists']['items']:
@@ -95,7 +99,7 @@ def issue_http_get(url, params={}, as_json=True):
     issue_http_get(url, params, as_json=as_json)
 
 
-def get_following_recent_albums(limit=5000):
+def get_following_recent_albums(limit=5000, year=2016):
   artists = following(limit=limit)[0]
   matched_albums = []
   for artist in artists:
@@ -116,7 +120,7 @@ def get_following_recent_albums(limit=5000):
     if not albums:
       print "**** artist", artist_name, "has no albums?!", r_json
       continue
-    matching_albums = [album for album in albums if album['release_date'].startswith('2016')]
+    matching_albums = [album for album in albums if album['release_date'].startswith(str(year))]
     for album in matching_albums:
       print "   ", album['release_date'], ' ->', album['name']
       matched_albums.append(album)
