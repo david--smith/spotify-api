@@ -38,6 +38,7 @@ else:
     albums_deduped[dedupe_key]=1
     print dedupe_key
     song_uris = [track['uri'] for track in album['tracks']['items']][:3]
+    # spotifier.delete_tracks_from_playlist(song_uris, playlist_id)
     spotifier.add_tracks_to_playlist(song_uris, playlist_id, existing_playlist_track_uris)
     existing_playlist_track_uris |= set(song_uris)
 

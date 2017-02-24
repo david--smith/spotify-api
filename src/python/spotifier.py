@@ -102,7 +102,10 @@ def issue_http_get(url, params={}, as_json=True):
 def get_following_recent_albums(limit=5000, year=2016):
   artists = following(limit=limit)[0]
   matched_albums = []
+  count=0
   for artist in artists:
+    count=count+1
+    print '>' + str(count) + "/" + str(len(artists))
     print 'artist=', artist
     artist_id = artist['id']
     artist_name = artist['name']
@@ -212,6 +215,25 @@ def upsert_playlist(playlist_name):
 def chunks(l, n):
   for i in xrange(0, len(l), n):
     yield l[i:i+n]
+
+def delete_tracks_from_playlist(track_uris, playlist_id):
+  if len(track_uris) < 1:
+    return
+  MAX_TRACKS_PER_API_CALL = 95
+  unique_tracks = list(set(track_uris))
+  print 'Potentially deleting {} tracks from playlist...'.format(len(unique_tracks))
+  #print '\t...unique tracks in original set: {}'.format(len(unique_tracks))
+
+  track_chunks = chunks(tracks_to_delete, MAX_TRACKS_PER_API_CALL)
+  for chunk in track_chunks:
+    url = 'https://api.spotify.com/v1/users/{}/playlists/{}/tracks'.format(USER_ID,playlist_id)
+    tracks = []
+    for next_track in chunk:
+      tracks.append({'uri': next_track})
+    data = {'tracks': tracks}
+    r = requests.delete(url, data=json.dumps(data), headers=REQUEST_HEADERS)
+    #print dir(r), r.text, r.json
+    print '\t{} tracks deleted.'.format(len(chunk))
 
 def add_tracks_to_playlist(track_uris, playlist_id, skip_tracks=set([])):
   if len(track_uris) < 1:
