@@ -37,6 +37,8 @@ def add_related_tracks_to_playlist(bands, playlist, max_artists, max_songs_per_a
         existing_playlist_songs |= set(track_uris)
 
 
+spotifier.login_user_to_spotify()
+
 band=sys.argv[1]
 
 related_bands = spotifier.fetch_related(band)
@@ -47,7 +49,6 @@ if len(related_bands) == 0:
 top_tracks = spotifier.fetch_top_tracks(band, False)
 track_uris = [track['uri'] for track in top_tracks]
 track_uris = track_uris
-spotifier.login_user_to_spotify()
 playlist = spotifier.create_playlist('{} RADIO'.format(band))
 playlist_songs = set([])
 spotifier.add_tracks_to_playlist(track_uris, playlist['id'], playlist_songs)
@@ -56,4 +57,3 @@ playlist_songs |= set(track_uris)
 band = spotifier.fetch_artist(band)
 add_related_tracks_to_playlist(band, playlist, 20, 5, playlist_songs)
 add_related_tracks_to_playlist(related_bands, playlist, 4, 3, playlist_songs)
-

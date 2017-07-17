@@ -262,6 +262,7 @@ def get_userid():
     user_json = user.json()
     #print user_json
     USER_ID = user_json['id']
+  print "USER_ID", USER_ID
   return USER_ID
 
 def get_playlist_tracks(playlist_id):
@@ -363,7 +364,7 @@ def get_access_token(code):
   ACCESS_TOKEN = token
   #print ACCESS_TOKEN
   REQUEST_HEADERS = {'Authorization': 'Bearer %s' % ACCESS_TOKEN, 'Content-Type': 'application/json'}
-  print "Obtained bearer token."
+  print "Obtained bearer token:", ACCESS_TOKEN
   return ACCESS_TOKEN, REQUEST_HEADERS
 
 
@@ -415,13 +416,14 @@ def login_user_to_spotify():
   #print 'GET request to: {}\nWith headers: {}\nWith body: {}'.format(url, headers, body_data)
   #print '\n\n', full_url
   #r = requests.get(url, params=body)
+  print "Opening URL:", full_url
   webbrowser.open(full_url)
   #print '----------'
   while http_thread.AUTH_CODE == None:
     print 'sleeping'
     time.sleep(.25)
-  print "Obtained auth code..."
   AUTH_CODE = http_thread.AUTH_CODE
+  print "Obtained auth code...", AUTH_CODE
   access_token, headers = get_access_token(AUTH_CODE)
   print ("Shutting down HTTP server...")
   http_thread.shutdown()
@@ -450,7 +452,7 @@ def fetch_top_tracks(artist, is_id=False):
   url = 'https://api.spotify.com/v1/artists/{}/top-tracks?country=US'.format(id)
   #print url
   try:
-    r = requests.get(url)
+    r = requests.get(url, headers=REQUEST_HEADERS)
     r_json = r.json()
 #    print prettify(r_json)
     songs = [{'name':song['name'],'id':song['id'], 'uri':song['uri']} for song in r_json['tracks'] ]
@@ -473,7 +475,7 @@ def fetch_related(artist, is_id=False):
   id = matches[0]['id']
   url = 'https://api.spotify.com/v1/artists/{}/related-artists'.format(id)
   try:
-    r = requests.get(url)
+    r = requests.get(url, headers=REQUEST_HEADERS)
     r_json = r.json()
     artist_matches = [{'name':artist_info['name'],'id':artist_info['id']} for artist_info in r_json['artists'] ]
   except:
@@ -498,7 +500,7 @@ def fetch_artist(artist, is_id=False):
     return []
 
 #  print url
-  r = requests.get(url)
+  r = requests.get(url, headers=REQUEST_HEADERS)
   try:
     r_json = r.json()
     if not is_id:
@@ -515,7 +517,7 @@ def fetch_track(artist, track):
     url = 'https://api.spotify.com/v1/search?q={}&type=track'.format(track)
   except:
     return []
-  r = requests.get(url)
+  r = requests.get(url, headers=REQUEST_HEADERS)
   if r.status_code == 400:
     return []
   r_json = r.json()
@@ -530,7 +532,7 @@ def fetch_album(album):
   except:
     return []
 #  r = requests.get(url, headers=headers)
-  r = requests.get(url)
+  r = requests.get(url, headers=REQUEST_HEADERS)
   if r.status_code == 400:
     return[]
   r_json = r.json()
@@ -541,7 +543,7 @@ def fetch_album(album):
     if 'artists' not in r_json:
       continue
     url = album['href']
-    r = requests.get(url)
+    r = requests.get(url, headers=REQUEST_HEADERS)
     r_json = r.json()
     album['artist'] = r_json['artists'][0]['name']
   return [album for album in album_matches if album.get('artist', None)]
@@ -607,5 +609,3 @@ def output_songs(url, title, songs, out_filename=None):
   f.write('</table>')
   f.write('</body></html>')
   f.close()
-
-
