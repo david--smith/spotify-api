@@ -19,7 +19,7 @@ import spotifier
 ##############################
 spotifier.login_user_to_spotify()
 
-year=2016
+year=2017
 playlist_name = "%d-new" % year
 playlist_id = spotifier.get_playlist(playlist_name)
 
@@ -41,6 +41,3 @@ else:
     # spotifier.delete_tracks_from_playlist(song_uris, playlist_id)
     spotifier.add_tracks_to_playlist(song_uris, playlist_id, existing_playlist_track_uris)
     existing_playlist_track_uris |= set(song_uris)
-
-
-
